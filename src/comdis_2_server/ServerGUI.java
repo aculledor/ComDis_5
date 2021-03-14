@@ -5,8 +5,6 @@
  */
 package comdis_2_server;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.rmi.Naming;
 import java.rmi.RemoteException;
@@ -169,19 +167,19 @@ public class ServerGUI extends javax.swing.JFrame {
         this.btn1.setEnabled(false);
         this.portInput.setEditable(false);
         
-        InputStreamReader is = new InputStreamReader(System.in);
-        BufferedReader br = new BufferedReader(is);
         String portNum, registryURL;
         try {
             portNum = this.portInput.getText().trim();
             int RMIPortNum = Integer.parseInt(portNum);
             startRegistry(RMIPortNum, this);
+            
             MathImplementation exportedObj = new MathImplementation();
             registryURL = "rmi://localhost:" + portNum + "/math";
+            
             Naming.rebind(registryURL, exportedObj);
-
             this.setLogArea("Server registered.  Registry currently contains:");
             System.out.println("Server registered.  Registry currently contains:");
+            
             // list names currently in the registry
             listRegistry(registryURL, this);
             this.appendLogArea("Math Server ready.");
