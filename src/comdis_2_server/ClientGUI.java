@@ -6,6 +6,9 @@
 package comdis_2_server;
 
 import java.util.ArrayList;
+import java.util.Random;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -14,8 +17,15 @@ import java.util.ArrayList;
 public class ClientGUI extends javax.swing.JFrame {
 
     public int prePort = 7777;
+    public long seed = 1102243;
+    public int pairNum = 0;
     public ArrayList<Integer> usedPorts;
-    public ArrayList<ArrayList<String>> servers;
+    public ArrayList<ArrayList<Long>> serverResult;
+    public double result;
+    public ArrayList<String> servers;
+    public ArrayList<ArrayList<Double[]>> pairs;
+    public Random random;
+    public Thread[] threads;
 
     /**
      * Creates new form ClientGUI_2
@@ -23,53 +33,116 @@ public class ClientGUI extends javax.swing.JFrame {
     public ClientGUI() {
         initComponents();
         this.setVisible(true);
-        System.out.println("Hola Mundo!");
-        this.nameError.setVisible(false);
-        this.portError.setVisible(false);
-        this.pathError.setVisible(false);
-
+        this.showServerErrors(false);
+        
         usedPorts = new ArrayList<>();
-        usedPorts.add(prePort);
-
+        serverResult = new ArrayList<>();
+        random = new Random(seed);
         servers = new ArrayList<>();
+        result = 0;
+        
         this.printServers();
-
-        this.work();
+    }
+    
+    public void showServerErrors(Boolean bool){
+        this.nameError.setVisible(bool);
+        this.portError.setVisible(bool);
+        this.pathError.setVisible(bool);
+    }
+    
+    public void setEditable(Boolean bool){
+        this.pairNumberArea.setEditable(bool);
+        this.serverNameArea.setEditable(bool);
+        this.serverPortArea.setEditable(bool);
+        this.serverPathArea.setEditable(bool);
+        this.localhostBTN.setEnabled(bool);
+        this.autofillBTN.setEnabled(bool);
+        this.addServerBTN.setEnabled(bool);
+        this.initBTN.setEnabled(bool);
     }
     
     public void work() {
-
-//            int RMIPort;
-//            
-//            String hostName;
-//            InputStreamReader is = new InputStreamReader(System.in);
-//            BufferedReader br = new BufferedReader(is);
-//            System.out.println("Enter the RMIRegistry host namer:");
-//            hostName = br.readLine();
-//            System.out.println("Enter the RMIregistry port number:");
-//            String portNum = br.readLine();
-//            RMIPort = Integer.parseInt(portNum);
-//            
-//            String registryURL = "rmi://" + hostName + ":" + portNum + "/math";
-//            // find the remote object and cast it to an interface object
-//            MathInterface h = (MathInterface) Naming.lookup(registryURL);
-//            System.out.println("Lookup completed ");
-//            // invoke the remote method
-//            Double[][] pairs = new Double[1][2];
-//            pairs[0][0] = 0.11111;
-//            pairs[0][1] = 0.22222;
-//            Long resposta = h.validatePairs(pairs);
-//            System.out.println("MathClient: " + resposta);
-//} // end try 
-//        catch (Exception e) {
-//            System.out.println("Exception in MathClient: " + e);
+        this.setEditable(false);
+        this.pairNum = Integer.parseInt(this.pairNumberArea.getText());
+        int serverNum = this.servers.size();
+        int pairsPerServer = this.pairNum / serverNum;
+        ArrayList<Double[]> auxList;
+        this.pairs = new ArrayList<>();
+        Double[] aux = new Double[2];
+        
+        //Data initalization
+        for (int i = 0; i < serverNum - 1; i++) {
+            auxList = new ArrayList<>();
+            for (int j = 0; j < pairsPerServer; j++) {
+                aux[0] = random.nextDouble();
+                aux[1] = random.nextDouble();
+                auxList.add(aux.clone());
+            }
+            this.pairs.add(auxList);
+        }
+        //Last iteration takes the rest
+        auxList = new ArrayList<>();
+        int rest = this.pairNum-pairsPerServer*(serverNum - 1);
+        for (int j = 0; j < rest; j++) {
+            aux[0] = random.nextDouble();
+            aux[1] = random.nextDouble();
+            auxList.add(aux.clone());
+        }
+        this.pairs.add(auxList);
+        
+        //Log
+//        for (int i = 0; i < this.pairs.size(); i++) {
+//            this.logArea.append("Server "+i+"\n");
+//            this.pairs.get(i).forEach((pair)->{
+//                this.logArea.append("\t["+pair[0]+","+pair[1]+"]\n");
+//            });
 //        }
+        
+        //Create threads
+        threads = new Thread[serverNum];
+        ArrayList<Long> auxArray;
+        this.logArea.setText("Creando hilos\n");
+        for (int i = 0; i < serverNum; i++) {
+            auxArray = new ArrayList<>();
+            this.serverResult.add(auxArray);
+            threads[i] = new MathHilo("Hilo " + (i+1), this.pairs.get(i), this.servers.get(i), auxArray);
+            this.logArea.append("\t-Hilo"+(i+1)+"]\n");
+        }
+        
+        //Start threads
+        this.logArea.setText("Iniciando hilos");
+        for (int i = 0; i < serverNum; i++) {
+            threads[i].start();
+            this.logArea.append("\t-Hilo"+(i+1)+"]\n");
+        }
+        
+        //Sync with threads
+        this.logArea.setText("Esperando por los hilos");
+        try {
+            for (int i = 0; i < serverNum; i++) {
+                threads[i].join();
+                this.logArea.append("\t-Hilo"+(i+1)+"] ha acabado\n");
+            }
+        } catch (InterruptedException ex) {
+            Logger.getLogger(ClientGUI.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        //Show result
+        this.logArea.setText("Mostrando resultado");
+        this.serverResult.forEach((result)->{
+            this.result += result.get(0);
+        });
+        this.result = (this.result/(float)this.pairNum)*4;
+        this.resultArea.setText(String.valueOf(this.result));
+        this.result = 0;
+        
+        this.setEditable(true);
     }
 
     public void printServers() {
         this.serverListArea.setText("Servers añadidos:\n");
         this.servers.forEach((server) -> {
-            this.serverListArea.append("\t-" + "rmi://" + server.get(0) + ":" + server.get(1) + "/" + server.get(2) + "\n");
+            this.serverListArea.append("\t-" + server + "\n");
         });
     }
 
@@ -84,7 +157,7 @@ public class ClientGUI extends javax.swing.JFrame {
 
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
-        pairNumberArea = new javax.swing.JTextField();
+        resultArea = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
@@ -92,7 +165,7 @@ public class ClientGUI extends javax.swing.JFrame {
         serverNameArea = new javax.swing.JTextField();
         serverPathArea = new javax.swing.JTextField();
         serverPortArea = new javax.swing.JTextField();
-        jButton1 = new javax.swing.JButton();
+        localhostBTN = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         serverListArea = new javax.swing.JTextArea();
         jLabel6 = new javax.swing.JLabel();
@@ -106,8 +179,10 @@ public class ClientGUI extends javax.swing.JFrame {
         logArea = new javax.swing.JTextArea();
         jSeparator1 = new javax.swing.JSeparator();
         jLabel8 = new javax.swing.JLabel();
-        pairNumberArea1 = new javax.swing.JTextField();
+        pairNumberArea = new javax.swing.JTextField();
         jButton2 = new javax.swing.JButton();
+        initBTN = new javax.swing.JButton();
+        initErrorText = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -117,10 +192,12 @@ public class ClientGUI extends javax.swing.JFrame {
         jLabel1.setForeground(new java.awt.Color(0, 0, 0));
         jLabel1.setText("Indica el número de pares a verificar");
 
-        pairNumberArea.setFont(new java.awt.Font("Times New Roman", 0, 18)); // NOI18N
-        pairNumberArea.addActionListener(new java.awt.event.ActionListener() {
+        resultArea.setEditable(false);
+        resultArea.setBackground(new java.awt.Color(255, 255, 255));
+        resultArea.setFont(new java.awt.Font("Times New Roman", 0, 18)); // NOI18N
+        resultArea.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                pairNumberAreaActionPerformed(evt);
+                resultAreaActionPerformed(evt);
             }
         });
 
@@ -150,17 +227,20 @@ public class ClientGUI extends javax.swing.JFrame {
             }
         });
 
+        serverPortArea.setBackground(new java.awt.Color(255, 255, 255));
         serverPortArea.setFont(new java.awt.Font("Times New Roman", 0, 18)); // NOI18N
 
-        jButton1.setFont(new java.awt.Font("Times New Roman", 0, 14)); // NOI18N
-        jButton1.setText("localhost");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        localhostBTN.setFont(new java.awt.Font("Times New Roman", 0, 14)); // NOI18N
+        localhostBTN.setText("localhost");
+        localhostBTN.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                localhostBTNActionPerformed(evt);
             }
         });
 
+        serverListArea.setEditable(false);
         serverListArea.setColumns(20);
+        serverListArea.setFont(new java.awt.Font("Times New Roman", 0, 14)); // NOI18N
         serverListArea.setRows(5);
         jScrollPane1.setViewportView(serverListArea);
 
@@ -201,7 +281,9 @@ public class ClientGUI extends javax.swing.JFrame {
         jLabel7.setForeground(new java.awt.Color(0, 0, 0));
         jLabel7.setText("Añade servidores:");
 
+        logArea.setEditable(false);
         logArea.setColumns(20);
+        logArea.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
         logArea.setRows(5);
         jScrollPane2.setViewportView(logArea);
 
@@ -212,10 +294,12 @@ public class ClientGUI extends javax.swing.JFrame {
         jLabel8.setForeground(new java.awt.Color(0, 0, 0));
         jLabel8.setText("Resultado");
 
-        pairNumberArea1.setFont(new java.awt.Font("Times New Roman", 0, 18)); // NOI18N
-        pairNumberArea1.addActionListener(new java.awt.event.ActionListener() {
+        pairNumberArea.setFont(new java.awt.Font("Times New Roman", 0, 18)); // NOI18N
+        pairNumberArea.setHorizontalAlignment(javax.swing.JTextField.TRAILING);
+        pairNumberArea.setText("0");
+        pairNumberArea.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                pairNumberArea1ActionPerformed(evt);
+                pairNumberAreaActionPerformed(evt);
             }
         });
 
@@ -226,6 +310,19 @@ public class ClientGUI extends javax.swing.JFrame {
                 jButton2ActionPerformed(evt);
             }
         });
+
+        initBTN.setBackground(new java.awt.Color(0, 102, 102));
+        initBTN.setFont(new java.awt.Font("Times New Roman", 0, 18)); // NOI18N
+        initBTN.setForeground(new java.awt.Color(255, 255, 255));
+        initBTN.setText("Comenzar");
+        initBTN.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                initBTNActionPerformed(evt);
+            }
+        });
+
+        initErrorText.setFont(new java.awt.Font("Times New Roman", 0, 14)); // NOI18N
+        initErrorText.setForeground(new java.awt.Color(255, 0, 0));
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -256,14 +353,14 @@ public class ClientGUI extends javax.swing.JFrame {
                                 .addComponent(serverNameArea))
                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                             .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(localhostBTN, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(autofillBTN, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                             .addGap(18, 18, 18)
                             .addComponent(addServerBTN, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
                             .addComponent(jLabel1)
                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                            .addComponent(pairNumberArea1))
+                            .addComponent(pairNumberArea))
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 421, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
                             .addComponent(jLabel6)
@@ -273,35 +370,38 @@ public class ClientGUI extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel8)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(pairNumberArea))
-                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 288, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jLabel3)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(initBTN, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
+                                    .addComponent(jLabel8)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                    .addComponent(resultArea))
+                                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 288, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jLabel3))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(initErrorText, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(pairNumberArea1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.TRAILING))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(pairNumberArea, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(initBTN, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(18, 18, 18)
                         .addComponent(jLabel7)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                     .addComponent(jLabel2)
                                     .addComponent(serverNameArea, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jButton1)
+                                    .addComponent(localhostBTN)
                                     .addComponent(nameError))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -322,13 +422,17 @@ public class ClientGUI extends javax.swing.JFrame {
                             .addComponent(jLabel6)
                             .addComponent(jButton2))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 248, Short.MAX_VALUE))
+                        .addComponent(jScrollPane1))
                     .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(initErrorText, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jScrollPane2)
+                        .addComponent(jLabel3)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 315, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(pairNumberArea, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(resultArea, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel8))))
                 .addContainerGap())
             .addComponent(jSeparator1)
@@ -348,44 +452,37 @@ public class ClientGUI extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void pairNumberAreaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pairNumberAreaActionPerformed
+    private void resultAreaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resultAreaActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_pairNumberAreaActionPerformed
+    }//GEN-LAST:event_resultAreaActionPerformed
 
     private void serverPathAreaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_serverPathAreaActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_serverPathAreaActionPerformed
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void localhostBTNActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_localhostBTNActionPerformed
         // TODO add your handling code here:
         this.serverNameArea.setText("localhost");
-    }//GEN-LAST:event_jButton1ActionPerformed
+    }//GEN-LAST:event_localhostBTNActionPerformed
 
     private void addServerBTNActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addServerBTNActionPerformed
         // TODO add your handling code here:
         if (this.serverNameArea.getText().isEmpty()) {
+            this.showServerErrors(false);
             this.nameError.setVisible(true);
-            this.portError.setVisible(false);
-            this.pathError.setVisible(false);
         } else if (this.serverPortArea.getText().isEmpty() || this.usedPorts.contains(Integer.parseInt(this.serverPortArea.getText()))) {
+            this.showServerErrors(false);
             this.portError.setVisible(true);
-            this.nameError.setVisible(false);
-            this.pathError.setVisible(false);
         } else if (this.serverPathArea.getText().isEmpty()) {
-            this.nameError.setVisible(false);
-            this.portError.setVisible(false);
+            this.showServerErrors(false);
             this.pathError.setVisible(true);
         } else {
-            this.nameError.setVisible(false);
-            this.portError.setVisible(false);
-            this.pathError.setVisible(false);
+            this.showServerErrors(false);
             this.usedPorts.add(Integer.parseInt(this.serverPortArea.getText()));
-
-            ArrayList<String> server = new ArrayList<>();
-            server.add(this.serverNameArea.getText().trim());
-            server.add(this.serverPortArea.getText().trim());
-            server.add(this.serverPathArea.getText().trim());
-            this.servers.add(server);
+            
+            this.servers.add("rmi://" + this.serverNameArea.getText().trim() + 
+                    ":" + this.serverPortArea.getText().trim() + 
+                    "/" + this.serverPathArea.getText().trim());
 
             this.printServers();
             this.serverNameArea.setText("");
@@ -402,20 +499,32 @@ public class ClientGUI extends javax.swing.JFrame {
         this.serverPortArea.setText(port.toString());
     }//GEN-LAST:event_autofillBTNActionPerformed
 
-    private void pairNumberArea1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pairNumberArea1ActionPerformed
+    private void pairNumberAreaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pairNumberAreaActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_pairNumberArea1ActionPerformed
+    }//GEN-LAST:event_pairNumberAreaActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
         this.printServers();
     }//GEN-LAST:event_jButton2ActionPerformed
 
+    private void initBTNActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_initBTNActionPerformed
+        // TODO add your handling code here:
+        if(this.servers.isEmpty()){
+            this.initErrorText.setText("La lista de servidores está vacía");
+        }else if(Integer.parseInt(this.pairNumberArea.getText()) <= 0){
+            this.initErrorText.setText("El número de pares es incorrecto");
+        }else{
+            this.work();
+        }
+    }//GEN-LAST:event_initBTNActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addServerBTN;
     private javax.swing.JButton autofillBTN;
-    private javax.swing.JButton jButton1;
+    private javax.swing.JButton initBTN;
+    private javax.swing.JLabel initErrorText;
     private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
@@ -429,12 +538,13 @@ public class ClientGUI extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JSeparator jSeparator1;
+    private javax.swing.JButton localhostBTN;
     private javax.swing.JTextArea logArea;
     private javax.swing.JLabel nameError;
     private javax.swing.JTextField pairNumberArea;
-    private javax.swing.JTextField pairNumberArea1;
     private javax.swing.JLabel pathError;
     private javax.swing.JLabel portError;
+    private javax.swing.JTextField resultArea;
     private javax.swing.JTextArea serverListArea;
     private javax.swing.JTextField serverNameArea;
     private javax.swing.JTextField serverPathArea;

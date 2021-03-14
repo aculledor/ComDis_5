@@ -2,6 +2,7 @@ package comdis_2_server;
 
 // A simple RMI interface file - M. Liu
 import java.rmi.*;
+import java.util.ArrayList;
 
 /**
  * This is a remote interface.
@@ -18,6 +19,6 @@ public interface MathInterface extends Remote {
      * @return a String message.
      * @throws java.rmi.RemoteException
      */
-    public long validatePairs(Double[][] pairs) throws java.rmi.RemoteException;
+    public long validatePairs(ArrayList<Double[]> pairs) throws java.rmi.RemoteException;
 
 } //end interface

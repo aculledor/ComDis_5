@@ -2,6 +2,7 @@ package comdis_2_server;
 
 import java.rmi.*;
 import java.rmi.server.*;
+import java.util.ArrayList;
 
 /**
  * This class implements the remote interface HelloInterface.
@@ -14,7 +15,7 @@ public class MathImplementation extends UnicastRemoteObject implements MathInter
         super();
     }
 
-    public long validatePairs(Double[][] pairs){
+    public long validatePairs(ArrayList<Double[]> pairs){
         long validated = 0;
         for (Double[] pair : pairs) {
             if( (pair[0] * pair[0]) + (pair[1] * pair[1]) <= 1 )
