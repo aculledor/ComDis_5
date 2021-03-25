@@ -1,4 +1,4 @@
-package comdis_2_server;
+package comdis_4;
 
 /**
  * This class represents the object server for a distributed object of class

@@ -1,4 +1,4 @@
-package comdis_2_server;
+package comdis_4;
 
 import java.rmi.*;
 import java.rmi.server.*;
