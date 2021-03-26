@@ -10,6 +10,7 @@ import java.rmi.Naming;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.util.ArrayList;
 
 /**
  *
@@ -18,7 +19,7 @@ import java.rmi.registry.Registry;
 public class ServerGUI extends javax.swing.JFrame {
 
     public int portIsSet = 0;
-
+    public FachadaBD database = null;
     /**
      * Creates new form ServerGUI
      */
@@ -27,7 +28,6 @@ public class ServerGUI extends javax.swing.JFrame {
         this.setVisible(true);
         this.setLogArea("Enter the RMIregistry port number...");
         System.out.println("Enter the RMIregistry port number...");
-        
     }
 
         // This method starts a RMI registry on the local host, if it
