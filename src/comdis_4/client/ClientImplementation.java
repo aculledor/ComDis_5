@@ -1,7 +1,5 @@
 package comdis_4.client;
 
-import comdis_4.classes.User;
-import comdis_4.server.ServerInterface;
 import comdis_4.server.ServerInterface;
 import comdis_4.classes.User;
 import java.net.MalformedURLException;
@@ -13,72 +11,40 @@ import java.rmi.server.*;
  *
  * @author M. L. Liu
  */
-public class ClientImplementation extends UnicastRemoteObject implements ClientInterface {
+ public class ClientImplementation extends UnicastRemoteObject implements ClientInterface {
     
     private ServerInterface server;
     private final Client client;
-    private final String nickname;
 
-    public ClientImplementation(Client client, String nickname) throws RemoteException {
+    public ClientImplementation(Client client) throws RemoteException {
         super();
         this.client = client;
-        this.nickname = nickname;
     }
     
-    public User connect(String registry, String nickname, String password) throws NotBoundException, MalformedURLException{
-        try{
-            server = (ServerInterface) Naming.lookup(registry);
-            return server.connect(this, nickname, password);
-        }catch(Exception e){
-            e.printStackTrace();
-            return null;
-        }
+    public User connect(String registry, String nickname, String password) throws NotBoundException, MalformedURLException, RemoteException{
+        server = (ServerInterface) Naming.lookup(registry);
+        return server.connect(this, nickname, password);
     }
     
-    public Boolean disconnect() throws NotBoundException, MalformedURLException{
-        try{
-            return server.disconnect(this);
-        }catch(Exception e){
-            e.printStackTrace();
-            return false;
-        }
+    public Boolean disconnect() throws NotBoundException, MalformedURLException, RemoteException{
+        return server.disconnect(this.client.getData());
     }
     
-    public User signUp(String registry, String nickname, String password) throws NotBoundException, MalformedURLException{
-        try{
-            server = (ServerInterface) Naming.lookup(registry);
-            return server.signUp(this, nickname, password);
-        }catch(Exception e){
-            e.printStackTrace();
-            return null;
-        }
+    public User signUp(String registry, String nickname, String password) throws NotBoundException, MalformedURLException, RemoteException{
+        server = (ServerInterface) Naming.lookup(registry);
+        return server.signUp(this, nickname, password);
     }
     
-    public Boolean deleteUser(String nickname, String password) throws NotBoundException, MalformedURLException{
-        try{
-            return server.deleteUser(this, nickname, password);
-        }catch(Exception e){
-            e.printStackTrace();
-            return false;
-        }
+    public Boolean deleteUser(String nickname, String password) throws NotBoundException, MalformedURLException, RemoteException{
+        return server.deleteUser(this.client.getData());
     }
     
-    public Boolean friendRequest(String nickname, String password, String friend) throws NotBoundException, MalformedURLException{
-        try{
-            return server.friendRequest(nickname, password, friend);
-        }catch(Exception e){
-            e.printStackTrace();
-            return null;
-        }
+    public Boolean friendRequest(String nickname, String password, String friend) throws NotBoundException, MalformedURLException, RemoteException{
+        return server.friendRequest(this.client.getData(), friend);
     }
     
-    public User removeFriend(String nickname, String password, String friend) throws NotBoundException, MalformedURLException{
-        try{
-            return server.removeFriend(nickname, password, friend);
-        }catch(Exception e){
-            e.printStackTrace();
-            return null;
-        }
+    public User removeFriend(String nickname, String password, String friend) throws NotBoundException, MalformedURLException, RemoteException{
+        return server.removeFriend(this.client.getData(), friend);
     }
     
     @Override
@@ -87,8 +53,14 @@ public class ClientImplementation extends UnicastRemoteObject implements ClientI
     }
     
     @Override
-    public String getNickname() throws RemoteException{
-        return nickname;
+    public void receiveFriendRequest(String sourceNickname) throws RemoteException{
+        client.receiveFriendRequest(sourceNickname);
     }
+
+    @Override
+    public void updateData(User newData) throws RemoteException {
+        this.client.setData(newData);
+    }
+    
     
 } // end class

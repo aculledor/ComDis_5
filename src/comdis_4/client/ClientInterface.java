@@ -1,6 +1,7 @@
 package comdis_4.client;
 
 // A simple RMI interface file - M. Liu
+import comdis_4.classes.User;
 import java.rmi.*;
 
 /**
@@ -19,11 +20,21 @@ public interface ClientInterface extends Remote {
     public void receiveMessage(String message) throws java.rmi.RemoteException;
 
     /**
-     * This remote method returns the nickname of the proxy's user
+     * This remote method gives the other client your message
      *
-     * @return a Boolean confirmation.
+     * @param sourceNickname - the name of the request's source.
      * @throws java.rmi.RemoteException
      */
-    public String getNickname() throws java.rmi.RemoteException;
+    public void receiveFriendRequest(String sourceNickname) throws java.rmi.RemoteException;
+
+    /**
+     * This remote method gives the other client your message
+     *
+     * @param newData
+     * @throws java.rmi.RemoteException
+     */
+    public void updateData(User newData) throws java.rmi.RemoteException;
+    
+    
 
 }  //end interface

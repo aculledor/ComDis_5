@@ -17,7 +17,7 @@ import java.util.ArrayList;
 public class Client {
     private ClientGUI gui;
     private ClientImplementation proxy;
-    private User myData;
+    private User data;
 
     public Client() {
         //gui = new ClientGUI(this);
@@ -25,9 +25,9 @@ public class Client {
     
     public void connect(){
         try{
-            proxy = new ClientImplementation(this, "Abraham");
-            myData = (User)proxy.connect("rmi://localhost:7777/P2P", "Abraham", "4321");
-            System.out.println(myData.toString());
+            proxy = new ClientImplementation(this);
+            data = (User)proxy.connect("rmi://localhost:7777/P2P", "Abraham", "4321");
+            System.out.println(data.toString());
         }catch(Exception e){
             e.printStackTrace();
         }
@@ -44,6 +44,20 @@ public class Client {
     public void receiveMessage(String message){
         System.out.println(message);
     }
+    
+    public void receiveFriendRequest(String sourceNickname){
+        System.out.println(sourceNickname);
+    }
+
+    public User getData() {
+        return data;
+    }
+
+    public Client setData(User user) {
+        data = user;
+        return this;
+    }
+    
     
     
 }
