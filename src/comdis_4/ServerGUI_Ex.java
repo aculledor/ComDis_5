@@ -174,7 +174,7 @@ public class ServerGUI_Ex extends javax.swing.JFrame {
             int RMIPortNum = Integer.parseInt(portNum);
             startRegistry(RMIPortNum, this);
             
-            ServerImplementation exportedObj = new ServerImplementation();
+            ServerImplementation exportedObj = null; //new ServerImplementation();
             registryURL = "rmi://localhost:" + portNum + "/math";
             
             Naming.rebind(registryURL, exportedObj);

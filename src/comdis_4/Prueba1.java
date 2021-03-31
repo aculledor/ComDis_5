@@ -26,15 +26,15 @@ public class Prueba1 {
             System.out.println(database.getUsers().toString());
             
             ArrayList<String> amigos = new ArrayList<>();amigos.add("Proba_2"); amigos.add("Proba_3");
-            User user = new User("Proba_1", "1111", amigos);
+            User user = new User("Proba_1", "1111");
             database.addUser(user);
             
             amigos = new ArrayList<>();amigos.add("Proba_1"); amigos.add("Proba_3");
-            user = new User("Proba_2", "2222", amigos);
+            user = new User("Proba_2", "2222");
             database.addUser(user);
             
             amigos = new ArrayList<>();amigos.add("Proba_1"); amigos.add("Proba_2");
-            user = new User("Proba_3", "3333", amigos);
+            user = new User("Proba_3", "3333");
             database.addUser(user);
             
             
