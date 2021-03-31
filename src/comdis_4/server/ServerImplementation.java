@@ -8,8 +8,6 @@ import java.rmi.server.*;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * This class implements the remote interface HelloInterface.
@@ -18,17 +16,15 @@ import java.util.logging.Logger;
  */
 public class ServerImplementation extends UnicastRemoteObject implements ServerInterface {
     
-    private ImpBD db;
-    private HashMap<String,User> onlineClients;
+    private final ImpBD db;
+    private final HashMap<String,User> onlineClients;
+    private final ServerGUI gui;
 
-    public ServerImplementation() throws RemoteException {
+    public ServerImplementation(ServerGUI gui) throws RemoteException, SQLException {
         super();
-        try {
-            db = new ImpBD();
-            onlineClients = new HashMap<>();
-        } catch (SQLException ex) {
-            Logger.getLogger(ServerImplementation.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        db = new ImpBD();
+        onlineClients = new HashMap<>();
+        this.gui = gui;
     }
     
     public HashMap<String, ClientInterface> getFriends(String nickname) throws SQLException, RemoteException{
@@ -66,6 +62,7 @@ public class ServerImplementation extends UnicastRemoteObject implements ServerI
             User newClient = db.getUser(nickname).setProxy(client).setFriendsProxys(this.getFriends(nickname)).setFriendRequests(db.getDestinationRequests(nickname));
             onlineClients.put(nickname, newClient);
             client.receiveMessage("Conectado");
+            gui.appendText("["+nickname+"] se ha conectado");
             return newClient;
         } catch (SQLException ex) {
             return null;
@@ -79,6 +76,7 @@ public class ServerImplementation extends UnicastRemoteObject implements ServerI
                 return false;
             }
             client.getProxy().receiveMessage("Desconectando");
+            gui.appendText("["+client.getNickname()+"] se ha desconectado");
             this.onlineClients.remove(client.getNickname());
             return true;
         } catch (SQLException ex) {
@@ -94,7 +92,8 @@ public class ServerImplementation extends UnicastRemoteObject implements ServerI
             }
             User newClient = db.addUser(nickname, password).setProxy(client).setFriendsProxys(this.getFriends(nickname));
             onlineClients.put(nickname, newClient);
-            client.receiveMessage("Conectado");
+            client.receiveMessage("Dado de alta");
+            gui.appendText("["+nickname+"] se ha dado de alta");
             return newClient;
         } catch (SQLException ex) {
             return null;
@@ -110,6 +109,7 @@ public class ServerImplementation extends UnicastRemoteObject implements ServerI
             db.deleteUser(client.getNickname());
             onlineClients.remove(client.getNickname());
             client.getProxy().receiveMessage("Borrando del server");
+            gui.appendText("["+client.getNickname()+"] ha sido borrado");
             return true;
         } catch (SQLException ex) {
             return false;
@@ -123,9 +123,10 @@ public class ServerImplementation extends UnicastRemoteObject implements ServerI
                 return false;
             }
             db.addRequest(client.getNickname(), friend);
-            client.getProxy().receiveMessage("Peticion de amistad guardada");
+            client.getProxy().receiveMessage("Peticion de amistad creada");
+            gui.appendText("Petición de amistad de ["+client.getNickname()+"] a ["+friend+"] creada");
             if(onlineClients.keySet().contains(friend)){
-                onlineClients.get(friend).getProxy().receiveMessage("Peticion de amistad de ["+client.getNickname()+"]" );
+                onlineClients.get(friend).getProxy().receiveMessage("Peticion de amistad de ["+client.getNickname()+"] recibida" );
                 onlineClients.get(friend).getProxy().receiveFriendRequest(client.getNickname());
             }
             return true;
@@ -142,6 +143,7 @@ public class ServerImplementation extends UnicastRemoteObject implements ServerI
             }
             db.addFriend(client.getNickname(), friend);
             client.getProxy().receiveMessage("Amistad con ["+friend+"] creada");
+            gui.appendText("Amistad entre ["+client.getNickname()+"] y ["+friend+"] creada");
             if(onlineClients.keySet().contains(friend)){
                 onlineClients.get(friend).getProxy().receiveMessage("El usuario ["+client.getNickname()+"] te ha añadido a amigos" );
                 onlineClients.get(friend).getProxy().updateData(this.getUser(onlineClients.get(friend).getProxy(), onlineClients.get(friend).getNickname(), onlineClients.get(friend).getPassword()));
@@ -160,6 +162,7 @@ public class ServerImplementation extends UnicastRemoteObject implements ServerI
             }
             db.deleteFriend(client.getNickname(), friend);
             client.getProxy().receiveMessage("Amistad con ["+friend+"] eliminada");
+            gui.appendText("Amistad entre ["+client.getNickname()+"] y ["+friend+"] eliminada");
             if(onlineClients.keySet().contains(friend)){
                 onlineClients.get(friend).getProxy().receiveMessage("El usuario ["+client.getNickname()+"] te ha eliminado de amigos" );
                 onlineClients.get(friend).getProxy().updateData(this.getUser(onlineClients.get(friend).getProxy(), onlineClients.get(friend).getNickname(), onlineClients.get(friend).getPassword()));
