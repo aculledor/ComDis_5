@@ -3,10 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package comdis_4;
+package comdis_4.database;
 
-import comdis_4.Request;
-import comdis_4.User;
+import comdis_4.classes.Request;
+import comdis_4.classes.Request;
+import comdis_4.classes.User;
+import comdis_4.classes.User;
 import java.sql.SQLException;
 import java.util.ArrayList;
 

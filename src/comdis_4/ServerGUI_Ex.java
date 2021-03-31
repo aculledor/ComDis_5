@@ -5,8 +5,8 @@
  */
 package comdis_4;
 
-import comdis_4.ImpBD;
-import comdis_4.ServerImplementation;
+import comdis_4.database.ImpBD;
+import comdis_4.server.ServerImplementation;
 import java.net.MalformedURLException;
 import java.rmi.Naming;
 import java.rmi.RemoteException;

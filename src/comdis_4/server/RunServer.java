@@ -1,4 +1,4 @@
-package comdis_4;
+package comdis_4.server;
 
 import comdis_4.ServerGUI_Ex;
 

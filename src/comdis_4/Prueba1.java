@@ -5,6 +5,8 @@
  */
 package comdis_4;
 
+import comdis_4.classes.User;
+import comdis_4.database.ImpBD;
 import java.util.ArrayList;
 
 /**

@@ -3,9 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package comdis_4;
+package comdis_4.client;
 
-import comdis_4.User;
+import comdis_4.classes.User;
+import comdis_4.classes.User;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 

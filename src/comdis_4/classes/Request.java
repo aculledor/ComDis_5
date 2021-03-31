@@ -3,13 +3,15 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package comdis_4;
+package comdis_4.classes;
+
+import java.io.Serializable;
 
 /**
  *
  * @author aculledor
  */
-public class Request {
+public class Request implements Serializable {
     private String source;
     private String destination;
 
@@ -42,6 +44,13 @@ public class Request {
         return "Origen: "+source+"; Destino: "+destination;
     }
 
+    @Override
+    public int hashCode() {
+        return super.hashCode(); //To change body of generated methods, choose Tools | Templates.
+    }
 
+    
+    
+    
     
 }

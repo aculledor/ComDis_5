@@ -1,7 +1,9 @@
-package comdis_4;
+package comdis_4.client;
 
-import comdis_4.User;
-import comdis_4.ServerInterface;
+import comdis_4.classes.User;
+import comdis_4.server.ServerInterface;
+import comdis_4.server.ServerInterface;
+import comdis_4.classes.User;
 import java.net.MalformedURLException;
 import java.rmi.*;
 import java.rmi.server.*;
