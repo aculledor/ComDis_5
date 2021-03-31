@@ -63,7 +63,7 @@ public class User implements Serializable{
         return proxy;
     }
 
-    public User setMyProxy(ClientInterface myProxy) {
+    public User setProxy(ClientInterface myProxy) {
         this.proxy = myProxy;
         return this;
     }
