@@ -21,7 +21,7 @@ import java.util.logging.Logger;
  * @author aculledor
  */
 public class ServerGUI extends javax.swing.JFrame {
-    int portNum;
+    int portNum = 7777;
     String registryURL;
     
     private ServerImplementation imp;
@@ -36,7 +36,6 @@ public class ServerGUI extends javax.swing.JFrame {
     
     private void start(){
         try {
-            portNum = 7777;
             //int RMIPortNum = Integer.parseInt(portNum);
             startRegistry(portNum, this);
             imp = new ServerImplementation(this);
