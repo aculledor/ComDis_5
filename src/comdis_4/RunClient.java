@@ -8,9 +8,10 @@ package comdis_4;
  * @author M. L. Liu
  */
 
-public class MathClient {
+public class RunClient {
 
    public static void main(String args[]) {
-       ClientGUI clientGUI = new ClientGUI();
+       Client client = new Client();
+       client.connect();
    } //end main
 }//end class
