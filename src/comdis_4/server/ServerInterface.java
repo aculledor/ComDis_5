@@ -3,7 +3,6 @@ package comdis_4.server;
 // A simple RMI interface file - M. Liu
 import comdis_4.client.ClientInterface;
 import comdis_4.classes.User;
-import comdis_4.classes.User;
 import java.rmi.*;
 
 /**

@@ -2,15 +2,12 @@ package comdis_4.server;
 
 import comdis_4.client.ClientInterface;
 import comdis_4.database.ImpBD;
-import comdis_4.database.ImpBD;
-import comdis_4.classes.User;
 import comdis_4.classes.User;
 import java.rmi.*;
 import java.rmi.server.*;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -53,7 +50,7 @@ public class ServerImplementation extends UnicastRemoteObject implements ServerI
             if(!db.isUserPassword(nickname, password)){
                 return null;
             }
-            User newClient = db.getUser(nickname).setMyProxy(client).setFriendsProxys(this.getFriends(nickname));
+            User newClient = db.getUser(nickname).setProxy(client).setFriendsProxys(this.getFriends(nickname));
             return newClient;
         } catch (SQLException ex) {
             return null;
@@ -66,7 +63,7 @@ public class ServerImplementation extends UnicastRemoteObject implements ServerI
             if(!db.isUserPassword(nickname, password)){
                 return null;
             }
-            User newClient = db.getUser(nickname).setMyProxy(client).setFriendsProxys(this.getFriends(nickname)).setFriendRequests(db.getDestinationRequests(nickname));
+            User newClient = db.getUser(nickname).setProxy(client).setFriendsProxys(this.getFriends(nickname)).setFriendRequests(db.getDestinationRequests(nickname));
             onlineClients.put(nickname, newClient);
             client.receiveMessage("Conectado");
             return newClient;
@@ -81,7 +78,7 @@ public class ServerImplementation extends UnicastRemoteObject implements ServerI
             if(!db.isUserPassword(client.getNickname(), client.getPassword())){
                 return false;
             }
-            client.getProxy().receiveMessage("Desconectando...");
+            client.getProxy().receiveMessage("Desconectando");
             this.onlineClients.remove(client.getNickname());
             return true;
         } catch (SQLException ex) {
@@ -95,7 +92,7 @@ public class ServerImplementation extends UnicastRemoteObject implements ServerI
             if(db.isUser(nickname)){
                 return null;
             }
-            User newClient = db.addUser(nickname, password).setMyProxy(client).setFriendsProxys(this.getFriends(nickname));
+            User newClient = db.addUser(nickname, password).setProxy(client).setFriendsProxys(this.getFriends(nickname));
             onlineClients.put(nickname, newClient);
             client.receiveMessage("Conectado");
             return newClient;
