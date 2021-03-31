@@ -27,7 +27,7 @@ public class ServerImplementation extends UnicastRemoteObject implements ServerI
         this.gui = gui;
     }
     
-    public HashMap<String, ClientInterface> getFriends(String nickname) throws SQLException, RemoteException{
+    private HashMap<String, ClientInterface> getFriends(String nickname) throws SQLException, RemoteException{
         ArrayList<String> friends = db.getFriends(nickname);
         HashMap<String, ClientInterface> onlineFriends = new HashMap<>();
         User client;
@@ -41,7 +41,7 @@ public class ServerImplementation extends UnicastRemoteObject implements ServerI
     }
     
     
-    public User getUser(ClientInterface client, String nickname, String password) throws RemoteException {
+    private User getUser(ClientInterface client, String nickname, String password) throws RemoteException {
         try {
             if(!db.isUserPassword(nickname, password)){
                 return null;
@@ -52,6 +52,19 @@ public class ServerImplementation extends UnicastRemoteObject implements ServerI
             return null;
         }
     }
+    
+    private User updatedUser(ClientInterface client, String nickname) throws SQLException, RemoteException{
+        return db.getUser(nickname).setProxy(client).setFriendsProxys(this.getFriends(nickname)).setFriendRequests(db.getDestinationRequests(nickname));
+    }
+    
+    
+    private void updateFriends(String nickname) throws RemoteException, SQLException {
+        HashMap<String, ClientInterface> onlineFriends = this.getFriends(nickname);
+        for(String friend : onlineFriends.keySet()){
+            onlineClients.replace(friend, updatedUser(onlineClients.get(friend).getProxy(), friend));
+            onlineClients.get(friend).getProxy().updateData(onlineClients.get(friend));
+        }
+    }
 
     @Override
     public User connect(ClientInterface client, String nickname, String password) throws RemoteException {
@@ -59,8 +72,9 @@ public class ServerImplementation extends UnicastRemoteObject implements ServerI
             if(!db.isUserPassword(nickname, password)){
                 return null;
             }
-            User newClient = db.getUser(nickname).setProxy(client).setFriendsProxys(this.getFriends(nickname)).setFriendRequests(db.getDestinationRequests(nickname));
+            User newClient = updatedUser(client, nickname);
             onlineClients.put(nickname, newClient);
+            updateFriends(nickname);
             client.receiveMessage("Conectado");
             gui.appendText("["+nickname+"] se ha conectado");
             return newClient;
@@ -78,6 +92,7 @@ public class ServerImplementation extends UnicastRemoteObject implements ServerI
             client.getProxy().receiveMessage("Desconectando");
             gui.appendText("["+client.getNickname()+"] se ha desconectado");
             this.onlineClients.remove(client.getNickname());
+            updateFriends(client.getNickname());
             return true;
         } catch (SQLException ex) {
             return false;
@@ -90,8 +105,9 @@ public class ServerImplementation extends UnicastRemoteObject implements ServerI
             if(db.isUser(nickname)){
                 return null;
             }
-            User newClient = db.addUser(nickname, password).setProxy(client).setFriendsProxys(this.getFriends(nickname));
+            User newClient = updatedUser(client, nickname);
             onlineClients.put(nickname, newClient);
+            updateFriends(nickname);
             client.receiveMessage("Dado de alta");
             gui.appendText("["+nickname+"] se ha dado de alta");
             return newClient;
@@ -108,6 +124,7 @@ public class ServerImplementation extends UnicastRemoteObject implements ServerI
             }
             db.deleteUser(client.getNickname());
             onlineClients.remove(client.getNickname());
+            updateFriends(client.getNickname());
             client.getProxy().receiveMessage("Borrando del server");
             gui.appendText("["+client.getNickname()+"] ha sido borrado");
             return true;
@@ -146,7 +163,7 @@ public class ServerImplementation extends UnicastRemoteObject implements ServerI
             gui.appendText("Amistad entre ["+client.getNickname()+"] y ["+friend+"] creada");
             if(onlineClients.keySet().contains(friend)){
                 onlineClients.get(friend).getProxy().receiveMessage("El usuario ["+client.getNickname()+"] te ha añadido a amigos" );
-                onlineClients.get(friend).getProxy().updateData(this.getUser(onlineClients.get(friend).getProxy(), onlineClients.get(friend).getNickname(), onlineClients.get(friend).getPassword()));
+                onlineClients.get(friend).getProxy().updateData(updatedUser(onlineClients.get(friend).getProxy(), onlineClients.get(friend).getNickname()));
             }
             return this.getUser(client.getProxy(), client.getNickname(), client.getPassword());
         } catch (SQLException ex) {
@@ -165,7 +182,7 @@ public class ServerImplementation extends UnicastRemoteObject implements ServerI
             gui.appendText("Amistad entre ["+client.getNickname()+"] y ["+friend+"] eliminada");
             if(onlineClients.keySet().contains(friend)){
                 onlineClients.get(friend).getProxy().receiveMessage("El usuario ["+client.getNickname()+"] te ha eliminado de amigos" );
-                onlineClients.get(friend).getProxy().updateData(this.getUser(onlineClients.get(friend).getProxy(), onlineClients.get(friend).getNickname(), onlineClients.get(friend).getPassword()));
+                onlineClients.get(friend).getProxy().updateData(updatedUser(onlineClients.get(friend).getProxy(), onlineClients.get(friend).getNickname()));
             }
             return this.getUser(client.getProxy(), client.getNickname(), client.getPassword());
         } catch (SQLException ex) {
