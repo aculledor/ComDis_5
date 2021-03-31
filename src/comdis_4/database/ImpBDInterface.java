@@ -22,7 +22,7 @@ public interface ImpBDInterface {
     //Return the given nickname's friend list after inserting the given relationship
     ArrayList<String> addFriend(String nickname, String friend) throws SQLException;
 
-    //Returns the request after saving it in the database
+    //Returns the source's pending requests after saving the new one in the database
     ArrayList<String> addRequest(String source, String destination) throws SQLException;
 
     //Returns the given user after saving it and retrieving it from the database
@@ -31,11 +31,11 @@ public interface ImpBDInterface {
     //Returns the given user after saving it and retrieving it from the database
     User addUser(User user) throws SQLException;
 
-    //Returns the list of friends after deleting the given friend relationship
+    //Returns the list of the nickname's user friends after deleting the given friend relationship
     ArrayList<String> deleteFriend(String nickname, String friend) throws SQLException;
 
-    //Returns the list of saved requests after deleting the given one
-    ArrayList<Request> deleteRequest(String nickname, String destination) throws SQLException;
+    //Returns the list of all saved requests after deleting the given one
+    ArrayList<Request> deleteRequest(String source, String destination) throws SQLException;
 
     //Returns the list of saved users after deleting the given nickname's user
     ArrayList<User> deleteUser(String nickname) throws SQLException;

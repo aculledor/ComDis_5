@@ -6,8 +6,6 @@
 package comdis_4.database;
 
 import comdis_4.classes.Request;
-import comdis_4.classes.Request;
-import comdis_4.classes.User;
 import comdis_4.classes.User;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -15,7 +13,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 /**
  *
@@ -70,6 +67,7 @@ public class ImpBD implements ImpBDInterface {
         }
     }
     
+    
     @Override
     public User addUser(User user) throws SQLException{
         try {
@@ -96,10 +94,10 @@ public class ImpBD implements ImpBDInterface {
     
     
     @Override
-    public ArrayList<Request> deleteRequest(String nickname, String destination) throws SQLException{
+    public ArrayList<Request> deleteRequest(String source, String destination) throws SQLException{
         try {
             Statement mystatement = database.createStatement();
-            mystatement.execute("DELETE FROM Abraham.Requests WHERE Source = '"+nickname+"' AND Destination = '"+nickname+"'");
+            mystatement.execute("DELETE FROM Abraham.Requests WHERE Source = '"+source+"' AND Destination = '"+destination+"'");
             return this.getRequests();
         } catch (SQLException e) {
             throw e;
