@@ -11,6 +11,7 @@ import comdis_4.classes.User;
 import comdis_4.classes.User;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  *
@@ -22,7 +23,7 @@ public interface ImpBDInterface {
     ArrayList<String> addFriend(String nickname, String friend) throws SQLException;
 
     //Returns the request after saving it in the database
-    ArrayList<Request> addRequest(String source, String destination) throws SQLException;
+    ArrayList<String> addRequest(String source, String destination) throws SQLException;
 
     //Returns the given user after saving it and retrieving it from the database
     User addUser(String nickname, String password) throws SQLException;
@@ -46,10 +47,10 @@ public interface ImpBDInterface {
     ArrayList<Request> getRequests() throws SQLException;
 
     //Returns the list of saved requests where the given nickname is the destination user 
-    ArrayList<Request> getDestinationRequests(String destination) throws SQLException;
+    ArrayList<String> getDestinationRequests(String destination) throws SQLException;
 
     //Returns the list of saved requests where the given nickname is the source user 
-    ArrayList<Request> getSourceRequests(String source) throws SQLException;
+    ArrayList<String> getSourceRequests(String source) throws SQLException;
 
     //Returns the user with the given nickname or null
     User getUser(String nickname) throws SQLException;
@@ -58,7 +59,10 @@ public interface ImpBDInterface {
     Boolean isUser(String nickname) throws SQLException;
 
     //Returns the given user after saving it and retrieving it from the database
-    Boolean isPassword(String nickname, String password) throws SQLException;
+    Boolean areFriends(String nickname, String friendNickname) throws SQLException;
+
+    //Returns the given user after saving it and retrieving it from the database
+    Boolean isUserPassword(String nickname, String password) throws SQLException;
 
     //Returns the list of saved users
     ArrayList<User> getUsers() throws SQLException;

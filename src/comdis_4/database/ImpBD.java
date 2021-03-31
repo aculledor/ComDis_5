@@ -15,6 +15,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  *
@@ -23,7 +24,6 @@ import java.util.ArrayList;
 public class ImpBD implements ImpBDInterface {
     
     private Connection database = null;
-    String pass = "HOLA MUNDOOO";
 
     public ImpBD() throws SQLException{
         try {
@@ -48,7 +48,7 @@ public class ImpBD implements ImpBDInterface {
     
     
     @Override
-    public ArrayList<Request> addRequest(String source, String destination) throws SQLException{
+    public ArrayList<String> addRequest(String source, String destination) throws SQLException{
         try {
             Statement mystatement = database.createStatement();
             mystatement.execute("INSERT INTO Abraham.Requests (Source, Destination) VALUES ('"+source+"', '"+destination+"')");
@@ -75,11 +75,6 @@ public class ImpBD implements ImpBDInterface {
         try {
             Statement mystatement = database.createStatement();
             mystatement.execute("INSERT INTO Abraham.Users (Nickname, Password) VALUES ('"+user.getNickname()+"', '"+user.getPassword()+"')");
-            if(user.getFriends() != null && !user.getFriends().isEmpty()){
-                for(String friend: user.getFriends()){
-                    mystatement.execute("INSERT INTO Abraham.Friends (Nickname, Friend) VALUES ('"+user.getNickname()+"', '"+friend+"')");
-                }
-            }
             return getUser(user.getNickname());
         } catch (SQLException e) {
             throw e;
@@ -164,18 +159,15 @@ public class ImpBD implements ImpBDInterface {
     
     
     @Override
-    public ArrayList<Request> getDestinationRequests(String destination) throws SQLException{
+    public ArrayList<String> getDestinationRequests(String destination) throws SQLException{
         try {
             Statement mystatement = database.createStatement();
             ResultSet myresult = mystatement.executeQuery("SELECT * FROM Abraham.Requests WHERE Destination = '"+destination+"'");
-            Request request;
-            ArrayList<Request> requests = new ArrayList<>();
-            String sour, dest;
+            ArrayList<String> requests = new ArrayList<>();
+            String sour;
             while(myresult.next()){
                 sour = myresult.getString("Source");
-                dest = myresult.getString("Destination");
-                request = new Request(sour, dest);
-                requests.add(request);
+                requests.add(sour);
             }
             return requests;
         } catch (SQLException e) {
@@ -185,18 +177,15 @@ public class ImpBD implements ImpBDInterface {
     
     
     @Override
-    public ArrayList<Request> getSourceRequests(String source) throws SQLException{
+    public ArrayList<String> getSourceRequests(String source) throws SQLException{
         try {
             Statement mystatement = database.createStatement();
             ResultSet myresult = mystatement.executeQuery("SELECT * FROM Abraham.Requests WHERE Source = '"+source+"'");
-            Request request;
-            ArrayList<Request> requests = new ArrayList<>();
-            String sour, dest;
+            ArrayList<String> requests = new ArrayList<>();
+            String dest;
             while(myresult.next()){
-                sour = myresult.getString("Source");
                 dest = myresult.getString("Destination");
-                request = new Request(sour, dest);
-                requests.add(request);
+                requests.add(dest);
             }
             return requests;
         } catch (SQLException e) {
@@ -212,12 +201,10 @@ public class ImpBD implements ImpBDInterface {
             ResultSet myresult = mystatement.executeQuery("SELECT * FROM Abraham.Users WHERE nickname = '"+nickname+"'");
             User user = null;
             String nick, pass;
-            ArrayList<String> friends;
             if(myresult.next()){
                 nick = myresult.getString("Nickname");
                 pass = myresult.getString("Password");
-                friends = this.getFriends(nick);
-                user = new User(nick, pass, friends);
+                user = new User(nick, pass);
             }
             return user;
         } catch (SQLException e) {
@@ -239,16 +226,28 @@ public class ImpBD implements ImpBDInterface {
     
     
     @Override
-    public Boolean isPassword(String nickname, String password) throws SQLException{
+    public Boolean isUserPassword(String nickname, String password) throws SQLException{
         try {
             Statement mystatement = database.createStatement();
             ResultSet myresult = mystatement.executeQuery("SELECT * FROM Abraham.Users WHERE nickname = '"+nickname+"'");
             
+            //No need to check nickname since we use it to find the user
             if(myresult.next()){
-                pass = myresult.getString("Password");
-                return password.equals(pass);
+                return password.equals(myresult.getString("Password"));
             }
             return false;
+        } catch (SQLException e) {
+            throw e;
+        }
+    }
+    
+    
+    @Override
+    public Boolean areFriends(String nickname, String friendNickname) throws SQLException{
+        try {
+            Statement mystatement = database.createStatement();
+            ResultSet myresult = mystatement.executeQuery("SELECT * FROM Abraham.Friends WHERE nickname = '"+nickname+"' AND friend = '"+friendNickname+"'");
+            return myresult.next();
         } catch (SQLException e) {
             throw e;
         }
@@ -262,13 +261,11 @@ public class ImpBD implements ImpBDInterface {
             ResultSet myresult = mystatement.executeQuery("SELECT * FROM Abraham.Users");
             ArrayList<User> users = new ArrayList<>();
             User user;
-            ArrayList<String> friends;
             String nick, pass;
             while(myresult.next()){
                 nick = myresult.getString("Nickname");
                 pass = myresult.getString("Password");
-                friends = this.getFriends(nick);
-                user = new User(nick, pass, friends);
+                user = new User(nick, pass);
                 users.add(user);
             }
             return users;
