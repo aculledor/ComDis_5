@@ -29,7 +29,7 @@ public interface ServerInterface extends Remote {
      * @return 
      * @throws java.rmi.RemoteException
      */
-    public Boolean disconnect(ClientInterface client) throws java.rmi.RemoteException;
+    public Boolean disconnect(User client) throws java.rmi.RemoteException;
 
     /**
      * This remote method returns the user if the sign up is successfull or null if it isnt
@@ -43,32 +43,37 @@ public interface ServerInterface extends Remote {
 
     /**
      * This remote method returns true if the deletion is successfull or false if it isnt
-     * @param client
-     * @param nickname
-     * @param password
+     * @param client 
      * @return the user or null.
      * @throws java.rmi.RemoteException
      */
-    public Boolean deleteUser(ClientInterface client, String nickname, String password) throws java.rmi.RemoteException;
+    public Boolean deleteUser(User client) throws java.rmi.RemoteException;
 
     /**
      * This remote method returns the user if the connection is successfull or null if it isnt
-     * @param nickname
-     * @param password
+     * @param client
      * @param friend
      * @return the user or null.
      * @throws java.rmi.RemoteException
      */
-    public Boolean friendRequest(String nickname, String password, String friend) throws java.rmi.RemoteException;
+    public Boolean friendRequest(User client, String friend) throws java.rmi.RemoteException;
+
+    /**
+     * This remote method returns the user if the connection is successfull or null if it isnt
+     * @param client
+     * @param friend
+     * @return the user or null.
+     * @throws java.rmi.RemoteException
+     */
+    public User acceptFriendRequest(User client, String friend) throws java.rmi.RemoteException;
 
     /**
      * This remote method returns the user after updating it
-     * @param nickname
-     * @param password
+     * @param client
      * @param friend
      * @return the user or null.
      * @throws java.rmi.RemoteException
      */
-    public User removeFriend(String nickname, String password, String friend) throws java.rmi.RemoteException;
+    public User removeFriend(User client, String friend) throws java.rmi.RemoteException;
 
 }  //end interface
