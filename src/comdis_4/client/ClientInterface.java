@@ -1,7 +1,6 @@
 package comdis_4.client;
 
 // A simple RMI interface file - M. Liu
-import comdis_4.classes.User;
 import java.rmi.*;
 
 /**
@@ -28,12 +27,21 @@ public interface ClientInterface extends Remote {
     public void receiveFriendRequest(String sourceNickname) throws java.rmi.RemoteException;
 
     /**
-     * This remote method gives the other client your message
+     * This remote method adds a friend to the client list
      *
-     * @param newData
+     * @param sourceNickname
+     * @param connectedFriend
      * @throws java.rmi.RemoteException
      */
-    public void updateData(User newData) throws java.rmi.RemoteException;
+    public void addFriendToList(String sourceNickname, ClientInterface connectedFriend) throws java.rmi.RemoteException;
+
+    /**
+     * This remote method removes a friend to the client list
+     *
+     * @param sourceNickname
+     * @throws java.rmi.RemoteException
+     */
+    public void removeFriendFromList(String sourceNickname) throws java.rmi.RemoteException;
     
     
 

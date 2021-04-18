@@ -6,7 +6,6 @@
 package comdis_4.database;
 
 import comdis_4.classes.Request;
-import comdis_4.classes.User;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -37,6 +36,7 @@ public class ImpBD implements ImpBDInterface {
             Statement mystatement = database.createStatement();
             mystatement.execute("INSERT INTO Abraham.Friends (Nickname, Friend) VALUES ('"+nickname+"', '"+friend+"')");
             mystatement.execute("INSERT INTO Abraham.Friends (Nickname, Friend) VALUES ('"+friend+"', '"+nickname+"')");
+            mystatement.execute("DELETE FROM Abraham.Requests WHERE Source = '"+friend+"' AND Destination = '"+nickname+"'");
             return getFriends(nickname);
         } catch (SQLException e) {
             throw e;
@@ -57,23 +57,11 @@ public class ImpBD implements ImpBDInterface {
     
     
     @Override
-    public User addUser(String nickname, String password) throws SQLException{
+    public ArrayList<String> addUser(String nickname, String password) throws SQLException{
         try {
             Statement mystatement = database.createStatement();
             mystatement.execute("INSERT INTO Abraham.Users (Nickname, Password) VALUES ('"+nickname+"', '"+password+"')");
             return getUser(nickname);
-        } catch (SQLException e) {
-            throw e;
-        }
-    }
-    
-    
-    @Override
-    public User addUser(User user) throws SQLException{
-        try {
-            Statement mystatement = database.createStatement();
-            mystatement.execute("INSERT INTO Abraham.Users (Nickname, Password) VALUES ('"+user.getNickname()+"', '"+user.getPassword()+"')");
-            return getUser(user.getNickname());
         } catch (SQLException e) {
             throw e;
         }
@@ -106,7 +94,7 @@ public class ImpBD implements ImpBDInterface {
     
     
     @Override
-    public ArrayList<User> deleteUser(String nickname) throws SQLException{
+    public ArrayList<ArrayList<String>> deleteUser(String nickname) throws SQLException{
         try {
             Statement mystatement = database.createStatement();
             mystatement.execute("DELETE FROM Abraham.Users WHERE nickname = '"+nickname+"'");
@@ -193,18 +181,17 @@ public class ImpBD implements ImpBDInterface {
     
     
     @Override
-    public User getUser(String nickname) throws SQLException{
+    public ArrayList<String> getUser(String nickname) throws SQLException{
         try {
             Statement mystatement = database.createStatement();
             ResultSet myresult = mystatement.executeQuery("SELECT * FROM Abraham.Users WHERE nickname = '"+nickname+"'");
-            User user = null;
-            String nick, pass;
+            ArrayList<String> aux = new ArrayList<>();
             if(myresult.next()){
-                nick = myresult.getString("Nickname");
-                pass = myresult.getString("Password");
-                user = new User(nick, pass);
+                aux.add(myresult.getString("Nickname"));
+                aux.add(myresult.getString("Password"));
+                return aux;
             }
-            return user;
+            return null;
         } catch (SQLException e) {
             throw e;
         }
@@ -253,18 +240,17 @@ public class ImpBD implements ImpBDInterface {
     
     
     @Override
-    public ArrayList<User> getUsers() throws SQLException{
+    public ArrayList<ArrayList<String>> getUsers() throws SQLException{
         try {
             Statement mystatement = database.createStatement();
             ResultSet myresult = mystatement.executeQuery("SELECT * FROM Abraham.Users");
-            ArrayList<User> users = new ArrayList<>();
-            User user;
-            String nick, pass;
+            ArrayList<ArrayList<String>> users = new ArrayList<>();
+            ArrayList<String> aux;
             while(myresult.next()){
-                nick = myresult.getString("Nickname");
-                pass = myresult.getString("Password");
-                user = new User(nick, pass);
-                users.add(user);
+                aux = new ArrayList<>();
+                aux.add(myresult.getString("Nickname"));
+                aux.add(myresult.getString("Password"));
+                users.add(aux);
             }
             return users;
         } catch (SQLException e) {

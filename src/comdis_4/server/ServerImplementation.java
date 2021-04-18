@@ -2,7 +2,6 @@ package comdis_4.server;
 
 import comdis_4.client.ClientInterface;
 import comdis_4.database.ImpBD;
-import comdis_4.classes.User;
 import java.rmi.*;
 import java.rmi.server.*;
 import java.sql.SQLException;
@@ -17,7 +16,7 @@ import java.util.HashMap;
 public class ServerImplementation extends UnicastRemoteObject implements ServerInterface {
     
     private final ImpBD db;
-    private final HashMap<String,User> onlineClients;
+    private final HashMap<String, ClientInterface> onlineClients;
     private final ServerGUI gui;
 
     public ServerImplementation(ServerGUI gui) throws RemoteException, SQLException {
@@ -30,69 +29,41 @@ public class ServerImplementation extends UnicastRemoteObject implements ServerI
     private HashMap<String, ClientInterface> getFriends(String nickname) throws SQLException, RemoteException{
         ArrayList<String> friends = db.getFriends(nickname);
         HashMap<String, ClientInterface> onlineFriends = new HashMap<>();
-        User client;
+        ClientInterface friendProxy;
         for(String friend : friends){
-            client = onlineClients.get(friend);
-            if(client != null){
-                onlineFriends.put(friend, client.getProxy());
+            friendProxy = onlineClients.get(friend);
+            if(friendProxy != null){
+                onlineFriends.put(friend, friendProxy);
             }
         }
         return onlineFriends;
     }
     
-    
-    private User getUser(ClientInterface client, String nickname, String password) throws RemoteException {
-        try {
-            if(!db.isUserPassword(nickname, password)){
-                return null;
-            }
-            User newClient = db.getUser(nickname).setProxy(client).setFriendsProxys(this.getFriends(nickname));
-            return newClient;
-        } catch (SQLException ex) {
-            return null;
+    private void addClientToFriends(String nickname) throws RemoteException, SQLException {
+        HashMap<String, ClientInterface> onlineFriends = this.getFriends(nickname);
+        ClientInterface client = onlineClients.get(nickname);
+        for(ClientInterface friend : onlineFriends.values()){
+            friend.addFriendToList(nickname, client);
         }
     }
     
-    private User updatedUser(ClientInterface client, String nickname) throws SQLException, RemoteException{
-        return db.getUser(nickname).setProxy(client).setFriendsProxys(this.getFriends(nickname)).setFriendRequests(db.getDestinationRequests(nickname));
-    }
-    
-    
-    private void updateFriends(String nickname) throws RemoteException, SQLException {
+    private void removeClientFromFriends(String nickname) throws RemoteException, SQLException {
         HashMap<String, ClientInterface> onlineFriends = this.getFriends(nickname);
-        for(String friend : onlineFriends.keySet()){
-            onlineClients.replace(friend, updatedUser(onlineClients.get(friend).getProxy(), friend));
-            onlineClients.get(friend).getProxy().updateData(onlineClients.get(friend));
+        for(ClientInterface friend : onlineFriends.values()){
+            friend.removeFriendFromList(nickname);
         }
     }
 
     @Override
-    public User connect(ClientInterface client, String nickname, String password) throws RemoteException {
+    public Boolean connect(ClientInterface client, String nickname, String password) throws RemoteException {
         try {
             if(!db.isUserPassword(nickname, password)){
                 return null;
             }
-            User newClient = updatedUser(client, nickname);
-            onlineClients.put(nickname, newClient);
-            updateFriends(nickname);
+            onlineClients.put(nickname, client);
+            this.addClientToFriends(nickname);
             client.receiveMessage("Conectado");
             gui.appendText("["+nickname+"] se ha conectado");
-            return newClient;
-        } catch (SQLException ex) {
-            return null;
-        }
-    }
-
-    @Override
-    public Boolean disconnect(User client) throws RemoteException {
-        try {
-            if(!db.isUserPassword(client.getNickname(), client.getPassword())){
-                return false;
-            }
-            client.getProxy().receiveMessage("Desconectando");
-            gui.appendText("["+client.getNickname()+"] se ha desconectado");
-            this.onlineClients.remove(client.getNickname());
-            updateFriends(client.getNickname());
             return true;
         } catch (SQLException ex) {
             return false;
@@ -100,33 +71,31 @@ public class ServerImplementation extends UnicastRemoteObject implements ServerI
     }
 
     @Override
-    public User signUp(ClientInterface client, String nickname, String password) throws RemoteException {
+    public Boolean signUp(ClientInterface client, String nickname, String password) throws RemoteException {
         try {
             if(db.isUser(nickname)){
                 return null;
             }
-            User newClient = updatedUser(client, nickname);
-            onlineClients.put(nickname, newClient);
-            updateFriends(nickname);
+            db.addUser(nickname, password);
+            onlineClients.put(nickname, client);
             client.receiveMessage("Dado de alta");
             gui.appendText("["+nickname+"] se ha dado de alta");
-            return newClient;
+            return true;
         } catch (SQLException ex) {
             return null;
         }
     }
 
     @Override
-    public Boolean deleteUser(User client) throws RemoteException {
+    public Boolean disconnect(String nickname, String password) throws RemoteException {
         try {
-            if(!db.isUserPassword(client.getNickname(), client.getPassword())){
+            if(!db.isUserPassword(nickname, password)){
                 return false;
             }
-            db.deleteUser(client.getNickname());
-            onlineClients.remove(client.getNickname());
-            updateFriends(client.getNickname());
-            client.getProxy().receiveMessage("Borrando del server");
-            gui.appendText("["+client.getNickname()+"] ha sido borrado");
+            onlineClients.get(nickname).receiveMessage("Desconectando...");
+            gui.appendText("["+nickname+"] se ha desconectado");
+            this.onlineClients.remove(nickname);
+            this.removeClientFromFriends(nickname);
             return true;
         } catch (SQLException ex) {
             return false;
@@ -134,17 +103,34 @@ public class ServerImplementation extends UnicastRemoteObject implements ServerI
     }
 
     @Override
-    public Boolean friendRequest(User client, String friend) throws RemoteException {
+    public Boolean deleteUser(String nickname, String password) throws RemoteException {
         try {
-            if(!db.isUserPassword(client.getNickname(), client.getPassword()) || !db.isUser(friend) || db.areFriends(client.getNickname(), friend)){
+            if(!db.isUserPassword(nickname, password)){
                 return false;
             }
-            db.addRequest(client.getNickname(), friend);
-            client.getProxy().receiveMessage("Peticion de amistad creada");
-            gui.appendText("Petición de amistad de ["+client.getNickname()+"] a ["+friend+"] creada");
+            db.deleteUser(nickname);
+            onlineClients.remove(nickname);
+            this.removeClientFromFriends(nickname);
+            onlineClients.get(nickname).receiveMessage("Borrado del server");
+            gui.appendText("["+nickname+"] ha sido borrado");
+            return true;
+        } catch (SQLException ex) {
+            return false;
+        }
+    }
+
+    @Override
+    public Boolean friendRequest(String nickname, String password, String friend) throws RemoteException {
+        try {
+            if(!db.isUserPassword(nickname, password) || !db.isUser(friend) || db.areFriends(nickname, friend)){
+                return false;
+            }
+            db.addRequest(nickname, friend);
+            onlineClients.get(nickname).receiveMessage("Peticion de amistad creada");
+            gui.appendText("Petición de amistad de ["+nickname+"] a ["+friend+"] creada");
             if(onlineClients.keySet().contains(friend)){
-                onlineClients.get(friend).getProxy().receiveMessage("Peticion de amistad de ["+client.getNickname()+"] recibida" );
-                onlineClients.get(friend).getProxy().receiveFriendRequest(client.getNickname());
+                onlineClients.get(friend).receiveMessage("Peticion de amistad de ["+nickname+"] recibida" );
+                onlineClients.get(friend).receiveFriendRequest(nickname);
             }
             return true;
         } catch (SQLException ex) {
@@ -153,38 +139,40 @@ public class ServerImplementation extends UnicastRemoteObject implements ServerI
     }
 
     @Override
-    public User acceptFriendRequest(User client, String friend) throws RemoteException {
+    public Boolean acceptFriendRequest(String nickname, String password, String friend) throws RemoteException {
         try {
-            if(!db.isUserPassword(client.getNickname(), client.getPassword()) || !db.isUser(friend) || db.areFriends(client.getNickname(), friend)){
+            if(!db.isUserPassword(nickname, password) || !db.isUser(friend) || db.areFriends(nickname, friend)){
                 return null;
             }
-            db.addFriend(client.getNickname(), friend);
-            client.getProxy().receiveMessage("Amistad con ["+friend+"] creada");
-            gui.appendText("Amistad entre ["+client.getNickname()+"] y ["+friend+"] creada");
+            db.addFriend(nickname, friend);
+            onlineClients.get(nickname).receiveMessage("Amistad con ["+friend+"] creada");
+            gui.appendText("Amistad entre ["+nickname+"] y ["+friend+"] creada");
             if(onlineClients.keySet().contains(friend)){
-                onlineClients.get(friend).getProxy().receiveMessage("El usuario ["+client.getNickname()+"] te ha añadido a amigos" );
-                onlineClients.get(friend).getProxy().updateData(updatedUser(onlineClients.get(friend).getProxy(), onlineClients.get(friend).getNickname()));
+                onlineClients.get(friend).receiveMessage("El usuario ["+nickname+"] te ha añadido a amigos" );
+                onlineClients.get(nickname).addFriendToList(friend, onlineClients.get(friend));
+                onlineClients.get(friend).addFriendToList(nickname, onlineClients.get(nickname));
             }
-            return this.getUser(client.getProxy(), client.getNickname(), client.getPassword());
+            return true;
         } catch (SQLException ex) {
             return null;
         }
     }
 
     @Override
-    public User removeFriend(User client, String friend) throws RemoteException {
+    public Boolean removeFriend(String nickname, String password, String friend) throws RemoteException {
         try {
-            if(!db.isUserPassword(client.getNickname(), client.getPassword()) || !db.isUser(friend) || !db.areFriends(client.getNickname(), friend)){
+            if(!db.isUserPassword(nickname, password) || !db.isUser(friend) || !db.areFriends(nickname, friend)){
                 return null;
             }
-            db.deleteFriend(client.getNickname(), friend);
-            client.getProxy().receiveMessage("Amistad con ["+friend+"] eliminada");
-            gui.appendText("Amistad entre ["+client.getNickname()+"] y ["+friend+"] eliminada");
+            db.deleteFriend(nickname, friend);
+            onlineClients.get(nickname).receiveMessage("Amistad con ["+friend+"] eliminada");
+            gui.appendText("Amistad entre ["+nickname+"] y ["+friend+"] eliminada");
             if(onlineClients.keySet().contains(friend)){
-                onlineClients.get(friend).getProxy().receiveMessage("El usuario ["+client.getNickname()+"] te ha eliminado de amigos" );
-                onlineClients.get(friend).getProxy().updateData(updatedUser(onlineClients.get(friend).getProxy(), onlineClients.get(friend).getNickname()));
+                onlineClients.get(friend).receiveMessage("El usuario ["+nickname+"] te ha eliminado de amigos" );
+                onlineClients.get(nickname).receiveFriendRequest(friend);
+                onlineClients.get(friend).receiveFriendRequest(nickname);
             }
-            return this.getUser(client.getProxy(), client.getNickname(), client.getPassword());
+            return true;
         } catch (SQLException ex) {
             return null;
         }

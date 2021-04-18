@@ -6,9 +6,6 @@
 package comdis_4.database;
 
 import comdis_4.classes.Request;
-import comdis_4.classes.Request;
-import comdis_4.classes.User;
-import comdis_4.classes.User;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -25,11 +22,8 @@ public interface ImpBDInterface {
     //Returns the source's pending requests after saving the new one in the database
     ArrayList<String> addRequest(String source, String destination) throws SQLException;
 
-    //Returns the given user after saving it and retrieving it from the database
-    User addUser(String nickname, String password) throws SQLException;
-
-    //Returns the given user after saving it and retrieving it from the database
-    User addUser(User user) throws SQLException;
+    //Returns true after saving it and retrieving it from the database
+    ArrayList<String> addUser(String nickname, String password) throws SQLException;
 
     //Returns the list of the nickname's user friends after deleting the given friend relationship
     ArrayList<String> deleteFriend(String nickname, String friend) throws SQLException;
@@ -38,7 +32,7 @@ public interface ImpBDInterface {
     ArrayList<Request> deleteRequest(String source, String destination) throws SQLException;
 
     //Returns the list of saved users after deleting the given nickname's user
-    ArrayList<User> deleteUser(String nickname) throws SQLException;
+    ArrayList<ArrayList<String>> deleteUser(String nickname) throws SQLException;
 
     //Returns the list of the nickname's friends
     ArrayList<String> getFriends(String nickname) throws SQLException;
@@ -52,19 +46,19 @@ public interface ImpBDInterface {
     //Returns the list of saved requests where the given nickname is the source user 
     ArrayList<String> getSourceRequests(String source) throws SQLException;
 
-    //Returns the user with the given nickname or null
-    User getUser(String nickname) throws SQLException;
+    //Returns the user data with the given nickname or null
+    ArrayList<String> getUser(String nickname) throws SQLException;
 
-    //Returns the given user after saving it and retrieving it from the database
+    //Checks if the user exists in the DB
     Boolean isUser(String nickname) throws SQLException;
 
-    //Returns the given user after saving it and retrieving it from the database
+    //Checks if the two users are friends
     Boolean areFriends(String nickname, String friendNickname) throws SQLException;
 
-    //Returns the given user after saving it and retrieving it from the database
+    //hecks if the password is correct
     Boolean isUserPassword(String nickname, String password) throws SQLException;
 
     //Returns the list of saved users
-    ArrayList<User> getUsers() throws SQLException;
+    ArrayList<ArrayList<String>> getUsers() throws SQLException;
     
 }

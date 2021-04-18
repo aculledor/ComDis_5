@@ -5,7 +5,8 @@
  */
 package comdis_4;
 
-import comdis_4.classes.User;
+
+import comdis_4.client.Client;
 import comdis_4.database.ImpBD;
 import java.util.ArrayList;
 
@@ -26,16 +27,16 @@ public class Prueba1 {
             System.out.println(database.getUsers().toString());
             
             ArrayList<String> amigos = new ArrayList<>();amigos.add("Proba_2"); amigos.add("Proba_3");
-            User user = new User("Proba_1", "1111");
-            database.addUser(user);
+            Client user = new Client("Proba_1", "1111");
+            database.addUser(user.getNickname(), user.getPassword());
             
             amigos = new ArrayList<>();amigos.add("Proba_1"); amigos.add("Proba_3");
-            user = new User("Proba_2", "2222");
-            database.addUser(user);
+            user = new Client("Proba_2", "2222");
+            database.addUser(user.getNickname(), user.getPassword());
             
             amigos = new ArrayList<>();amigos.add("Proba_1"); amigos.add("Proba_2");
-            user = new User("Proba_3", "3333");
-            database.addUser(user);
+            user = new Client("Proba_3", "3333");
+            database.addUser(user.getNickname(), user.getPassword());
             
             
             System.out.println("TRAS METER PROBA");
