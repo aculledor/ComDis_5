@@ -34,23 +34,46 @@ public class Client {
         friendRequests = new ArrayList<>();
     }
     
+    public void start(){
+        gui = new ClientGUI(this);
+        gui.start();
+    }
+    
+    private void showError(String message){
+        if(message == null){
+            this.gui.showError("Un error inesperado a ocurrido");
+            return;
+        }
+        this.gui.showError(message);
+    }
     
     
     //CONNECTION FUNCTIONS
     public void connect(){
         try{
             proxy = new ClientImplementation(this);
-            Boolean success = proxy.connect();
+            Boolean bool = proxy.connect();
+            if(bool){
+                this.gui.cerrarInicio();
+                this.gui.setVisible(true);
+            }else{
+                this.showError("No pudo conectarse al servidor");
+            }
         }catch(Exception e){
-            e.printStackTrace();
+                this.showError(e.getLocalizedMessage());
         }
     }
     public void signUp(){
         try{
             proxy = new ClientImplementation(this);
-            Boolean success = proxy.signUp();
+            
+            if(proxy.signUp()){
+                this.gui.cerrarInicio();
+            }else{
+                
+            }
         }catch(Exception e){
-            e.printStackTrace();
+                this.showError(e.toString());
         }
     }
     
@@ -58,7 +81,7 @@ public class Client {
         try{
             System.out.println(proxy.disconnect());
         }catch(Exception e){
-            e.printStackTrace();
+                this.showError(e.toString());
         }
     }
     
@@ -66,7 +89,7 @@ public class Client {
         try{
             System.out.println(proxy.deleteUser());
         }catch(Exception e){
-            e.printStackTrace();
+                this.showError(e.toString());
         }
     }
     
@@ -93,56 +116,63 @@ public class Client {
         return gui;
     }
 
-    public void setGui(ClientGUI gui) {
+    public Client setGui(ClientGUI gui) {
         this.gui = gui;
+        return this;
     }
 
     public ClientImplementation getProxy() {
         return proxy;
     }
 
-    public void setProxy(ClientImplementation proxy) {
+    public Client setProxy(ClientImplementation proxy) {
         this.proxy = proxy;
+        return this;
     }
 
     public String getNickname() {
         return nickname;
     }
 
-    public void setNickname(String nickname) {
+    public Client setNickname(String nickname) {
         this.nickname = nickname;
+        return this;
     }
 
     public String getPassword() {
         return password;
     }
 
-    public void setPassword(String password) {
+    public Client setPassword(String password) {
         this.password = password;
+        return this;
     }
 
     public HashMap<String, ClientInterface> getFriendsProxys() {
         return friendsProxys;
     }
 
-    public void setFriendsProxys(HashMap<String, ClientInterface> friendsProxys) {
+    public Client setFriendsProxys(HashMap<String, ClientInterface> friendsProxys) {
         this.friendsProxys = friendsProxys;
+        return this;
     }
 
     public ArrayList<String> getFriendRequests() {
         return friendRequests;
     }
 
-    public void setFriendRequests(ArrayList<String> friendRequests) {
+    public Client setFriendRequests(ArrayList<String> friendRequests) {
         this.friendRequests = friendRequests;
+        return this;
     }
 
     public String getRegistry() {
         return registry;
     }
 
-    public void setRegistry(String registry) {
+    public Client setRegistry(String registry) {
         this.registry = registry;
+        return this;
     }
     
     

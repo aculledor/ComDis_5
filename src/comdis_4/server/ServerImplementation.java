@@ -7,6 +7,7 @@ import java.rmi.server.*;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Set;
 
 /**
  * This class implements the remote interface HelloInterface.
@@ -19,11 +20,16 @@ public class ServerImplementation extends UnicastRemoteObject implements ServerI
     private final HashMap<String, ClientInterface> onlineClients;
     private final ServerGUI gui;
 
+    public String getUsers(){
+        return this.onlineClients.keySet().toString();
+    }
+    
     public ServerImplementation(ServerGUI gui) throws RemoteException, SQLException {
         super();
         db = new ImpBD();
         onlineClients = new HashMap<>();
         this.gui = gui;
+        this.gui.setVisible(true);
     }
     
     private HashMap<String, ClientInterface> getFriends(String nickname) throws SQLException, RemoteException{

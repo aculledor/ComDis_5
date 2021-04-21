@@ -26,21 +26,20 @@ public class Prueba1 {
             System.out.println("INICIO");
             System.out.println(database.getUsers().toString());
             
-            ArrayList<String> amigos = new ArrayList<>();amigos.add("Proba_2"); amigos.add("Proba_3");
             Client user = new Client("Proba_1", "1111");
             database.addUser(user.getNickname(), user.getPassword());
             
-            amigos = new ArrayList<>();amigos.add("Proba_1"); amigos.add("Proba_3");
             user = new Client("Proba_2", "2222");
+            database.addFriend("Proba_1", "Proba_2");
             database.addUser(user.getNickname(), user.getPassword());
             
-            amigos = new ArrayList<>();amigos.add("Proba_1"); amigos.add("Proba_2");
             user = new Client("Proba_3", "3333");
             database.addUser(user.getNickname(), user.getPassword());
             
             
             System.out.println("TRAS METER PROBA");
             System.out.println(database.getUsers().toString());
+            System.out.println(database.getFriends("Proba_1").toString());
             
             System.out.println("FINAL");
             database.deleteUser("Proba_1");

@@ -102,6 +102,7 @@ public class ServerGUI extends javax.swing.JFrame {
         logArea = new javax.swing.JTextArea();
         jLabel1 = new javax.swing.JLabel();
         jButton1 = new javax.swing.JButton();
+        usersBTN = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -125,6 +126,16 @@ public class ServerGUI extends javax.swing.JFrame {
             }
         });
 
+        usersBTN.setBackground(new java.awt.Color(102, 255, 204));
+        usersBTN.setFont(new java.awt.Font("Times New Roman", 0, 18)); // NOI18N
+        usersBTN.setForeground(new java.awt.Color(0, 0, 0));
+        usersBTN.setText("Imprimir Usuarios");
+        usersBTN.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                usersBTNActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -137,7 +148,8 @@ public class ServerGUI extends javax.swing.JFrame {
                         .addComponent(jLabel1)
                         .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(usersBTN)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jButton1)))
                 .addContainerGap())
         );
@@ -149,7 +161,9 @@ public class ServerGUI extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 331, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(usersBTN, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(5, 5, 5))
         );
 
@@ -172,6 +186,11 @@ public class ServerGUI extends javax.swing.JFrame {
         setText("");
     }//GEN-LAST:event_jButton1ActionPerformed
 
+    private void usersBTNActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_usersBTNActionPerformed
+        // TODO add your handling code here:
+        this.logArea.append(this.imp.getUsers());
+    }//GEN-LAST:event_usersBTNActionPerformed
+
     
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -180,5 +199,6 @@ public class ServerGUI extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextArea logArea;
+    private javax.swing.JButton usersBTN;
     // End of variables declaration//GEN-END:variables
 }
