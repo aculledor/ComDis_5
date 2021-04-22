@@ -128,10 +128,10 @@ public class ServerImplementation extends UnicastRemoteObject implements ServerI
                 return false;
             }
             db.deleteUser(nickname);
-            onlineClients.remove(nickname);
-            this.removeClientFromFriends(nickname);
             onlineClients.get(nickname).receiveMessage(name, nickname+" se ha borrado del server");
             gui.appendText("["+nickname+"] ha sido borrado");
+            onlineClients.remove(nickname);
+            this.removeClientFromFriends(nickname);
             return true;
         } catch (SQLException ex) {
             return false;
