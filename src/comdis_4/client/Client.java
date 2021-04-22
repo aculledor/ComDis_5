@@ -146,7 +146,7 @@ public class Client {
                 this.gui.updateListaPeticiones(friendRequests);
                 //this.updateGUIData();
             }else{
-                this.showError("No pudo borrarse el usuario del servidor");
+                this.showError("No pudo aceptarse la peticion de amistad");
             }
         }catch(MalformedURLException | NotBoundException | RemoteException e){
             this.showError(e.toString());
