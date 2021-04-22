@@ -57,7 +57,7 @@ public interface ServerInterface extends Remote {
      * @return the user or null.
      * @throws java.rmi.RemoteException
      */
-    public Boolean friendRequest(String nickname, String password, String friend) throws java.rmi.RemoteException;
+    public Boolean createFriendRequest(String nickname, String password, String friend) throws java.rmi.RemoteException;
 
     /**
      * This remote method returns true if the connection is successfull or false if it isnt
@@ -68,6 +68,16 @@ public interface ServerInterface extends Remote {
      * @throws java.rmi.RemoteException
      */
     public Boolean acceptFriendRequest(String nickname, String password, String friend) throws java.rmi.RemoteException;
+
+    /**
+     * This remote method returns true if the connection is successfull or false if it isnt
+     * @param nickname
+     * @param password
+     * @param friend
+     * @return the user or null.
+     * @throws java.rmi.RemoteException
+     */
+    public Boolean rejectFriendRequest(String nickname, String password, String friend) throws java.rmi.RemoteException;
 
     /**
      * This remote method returns the user after updating it

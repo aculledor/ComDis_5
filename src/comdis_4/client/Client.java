@@ -5,9 +5,12 @@
  */
 package comdis_4.client;
 
+import java.net.MalformedURLException;
+import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  *
@@ -47,6 +50,20 @@ public class Client {
         this.gui.showError(message);
     }
     
+    private void restartSession(){
+        friendsProxys = new HashMap<>();
+        friendRequests = new ArrayList<>();
+        this.start();
+    }
+    
+    
+    public void updateGUIData(){
+        List<String> friends = new ArrayList<String>();
+        friends.addAll(friendsProxys.keySet());
+        this.gui.updateData((ArrayList<String>) friends, friendRequests);
+        System.out.println(this.friendRequests.toString());
+        System.out.println(this.friendsProxys.keySet().toString());
+    }
     
     //CONNECTION FUNCTIONS
     public void connect(){
@@ -56,58 +73,155 @@ public class Client {
             if(bool){
                 this.gui.cerrarInicio();
                 this.gui.setVisible(true);
+                this.updateGUIData();
             }else{
                 this.showError("No pudo conectarse al servidor");
             }
         }catch(Exception e){
-                this.showError(e.getLocalizedMessage());
+            this.showError(e.getLocalizedMessage());
         }
     }
     public void signUp(){
         try{
             proxy = new ClientImplementation(this);
-            
-            if(proxy.signUp()){
+            Boolean bool = proxy.signUp();
+            if(bool){
                 this.gui.cerrarInicio();
+                this.gui.setVisible(true);
+                this.updateGUIData();
             }else{
-                
+                this.showError("No pudo darse de alta en el servidor");
             }
         }catch(Exception e){
-                this.showError(e.toString());
+            this.showError(e.toString());
         }
     }
     
     public void disconnect(){
         try{
-            System.out.println(proxy.disconnect());
+            Boolean bool = proxy.disconnect();
+            if(bool){
+                this.gui.dispose();
+                this.restartSession();
+            }else{
+                this.showError("No pudo desconectarse del servidor");
+            }
         }catch(Exception e){
-                this.showError(e.toString());
+            this.showError(e.toString());
         }
     }
     
     public void deleteUser(){
         try{
-            System.out.println(proxy.deleteUser());
+            Boolean bool = proxy.deleteUser();
+            if(bool){
+                this.gui.dispose();
+                this.restartSession();
+            }else{
+                this.showError("No pudo borrarse el usuario del servidor");
+            }
         }catch(Exception e){
-                this.showError(e.toString());
+            this.showError(e.toString());
         }
     }
     
-    //USABILITY FUNCTIONS    
-    public void receiveMessage(String message){
-        System.out.println(message);
+    public void acceptFriendRequest(String friend){
+        try{
+            Boolean bool = this.proxy.acceptFriendRequest(friend);
+            if(bool){
+                this.friendRequests.remove(friend);
+                this.updateGUIData();
+            }else{
+                this.showError("No pudo borrarse el usuario del servidor");
+            }
+        }catch(Exception e){
+            this.showError(e.toString());
+        }
+    }
+    
+    public void rejectFriendRequest(String friend){
+        try{
+            Boolean bool = this.proxy.rejectFriendRequest(friend);
+            if(bool){
+                this.friendRequests.remove(friend);
+                this.updateGUIData();
+            }else{
+                this.showError("No pudo borrarse el usuario del servidor");
+            }
+        }catch(Exception e){
+            this.showError(e.toString());
+        }
+    }
+    
+    public void sendMessage(String friend, String message){
+        try{
+            this.getFriendsProxys().get(friend).receiveMessage(nickname, message);
+            this.gui.confirmSent();
+        }catch(Exception e){
+            this.showError(e.toString());
+        }
+    }
+    
+    public void sendFriendRequest(String friend){
+        try{
+            this.proxy.createFriendRequest(friend);
+        }catch(Exception e){
+            this.showError(e.toString());
+        }
+    }
+    
+    //USABILITY FUNCTIONS 
+    public void receiveMessage(String friend, String message){
+        if(friend.equals("Server_P2P")){
+            this.gui.receiveServerMessage(friend, message);
+            return;
+        }
+        this.gui.receiveMessage(friend, message);
     }
     
     public void receiveFriendRequest(String sourceNickname){
-        System.out.println(sourceNickname);
+        try{
+            this.friendRequests.add(sourceNickname);
+            this.updateGUIData();
+        }catch(Exception e){
+            this.showError(e.toString());
+        }
+    }
+    
+    public void setFriendList(HashMap<String, ClientInterface> connectedFriends){
+        try{
+            this.friendsProxys = connectedFriends;
+            this.updateGUIData();
+        }catch(Exception e){
+            this.showError(e.toString());
+        }
+    }
+    
+    public void setFriendRequestList(ArrayList<String> friendRequests){
+        try{
+            this.friendRequests = friendRequests;  
+            this.updateGUIData();  
+        }catch(Exception e){
+            this.showError(e.toString());
+        }
     }
     
     public void addFriendToList(String sourceNickname, ClientInterface connectedFriend) throws RemoteException {
-        this.friendsProxys.put(nickname, connectedFriend);
+        try{
+            this.friendsProxys.put(nickname, connectedFriend); 
+            this.updateGUIData();
+        }catch(Exception e){
+            this.showError(e.toString());
+        }
     }
 
     public void removeFriendFromList(String sourceNickname) throws RemoteException {
-        this.friendsProxys.remove(nickname);
+        try{
+            this.friendsProxys.remove(nickname);  
+            this.updateGUIData();
+        }catch(Exception e){
+            this.showError(e.toString());
+        }
     }
 
     

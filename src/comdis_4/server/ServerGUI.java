@@ -188,7 +188,7 @@ public class ServerGUI extends javax.swing.JFrame {
 
     private void usersBTNActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_usersBTNActionPerformed
         // TODO add your handling code here:
-        this.logArea.append(this.imp.getUsers());
+        this.logArea.append(this.imp.getUsers()+"\n");
     }//GEN-LAST:event_usersBTNActionPerformed
 
     

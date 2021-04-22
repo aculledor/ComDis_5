@@ -210,6 +210,7 @@ public class VInicio extends javax.swing.JDialog {
     private void signUpBTNActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_signUpBTNActionPerformed
         // TODO add your handling code here:
         this.setInteractive(false);
+        this.padre.signUp(this.nameTXT.getText(), this.passTXT.getText(), this.serverTXT.getText());
     }//GEN-LAST:event_signUpBTNActionPerformed
 
 

@@ -4,6 +4,10 @@ import comdis_4.server.ServerInterface;
 import java.net.MalformedURLException;
 import java.rmi.*;
 import java.rmi.server.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * This class implements the remote interface HelloInterface.
@@ -39,20 +43,20 @@ import java.rmi.server.*;
         return server.deleteUser(client.getNickname(), client.getPassword());
     }
     
-    public Boolean friendRequest(String nickname, String password, String friend) throws NotBoundException, MalformedURLException, RemoteException{
-        return server.friendRequest(client.getNickname(), client.getPassword(), friend);
+    public Boolean createFriendRequest(String friend) throws NotBoundException, MalformedURLException, RemoteException{
+        return server.createFriendRequest(client.getNickname(), client.getPassword(), friend);
     }
     
-    public Boolean removeFriend(String nickname, String password, String friend) throws NotBoundException, MalformedURLException, RemoteException{
+    public Boolean removeFriend(String friend) throws NotBoundException, MalformedURLException, RemoteException{
         return server.removeFriend(client.getNickname(), client.getPassword(), friend);
     }
     
-    public Boolean addFriendToList(String nickname, String password, String friend) throws NotBoundException, MalformedURLException, RemoteException{
-        return server.removeFriend(client.getNickname(), client.getPassword(), friend);
+    public Boolean acceptFriendRequest(String friend) throws NotBoundException, MalformedURLException, RemoteException{
+        return server.acceptFriendRequest(client.getNickname(), client.getPassword(), friend);
     }
     
-    public Boolean removeFriendFromList(String nickname, String password, String friend) throws NotBoundException, MalformedURLException, RemoteException{
-        return server.removeFriend(client.getNickname(), client.getPassword(), friend);
+    public Boolean rejectFriendRequest(String friend) throws NotBoundException, MalformedURLException, RemoteException{
+        return server.acceptFriendRequest(client.getNickname(), client.getPassword(), friend);
     }
 
     
@@ -71,13 +75,22 @@ import java.rmi.server.*;
     public void receiveFriendRequest(String sourceNickname) throws RemoteException{
         client.receiveFriendRequest(sourceNickname);
     }
+
+    @Override
+    public void setFriendList(Map<String, ClientInterface> connectedFriends) throws RemoteException {
+        client.setFriendList((HashMap<String, ClientInterface>) connectedFriends);
+    }
+
+    @Override
+    public void setFriendRequestList(List<String> friendRequests) throws RemoteException {
+        client.setFriendRequestList((ArrayList<String>) friendRequests);
+    }
     
     
     //CLIENT FUNCTION
     @Override
-    public void receiveMessage(String message) throws RemoteException{
-        client.receiveMessage(message);
+    public void receiveMessage(String nickname, String message) throws RemoteException{
+        client.receiveMessage(nickname, message);
     }
-    
     
 }
