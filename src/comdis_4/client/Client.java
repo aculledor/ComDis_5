@@ -161,8 +161,8 @@ public class Client {
             if(bool){
                 this.friendRequests.remove(friend);
                 //this.gui.removeFriendRequest(friend);
-                //this.gui.updateListaPeticiones(friendRequests);
-                this.updateGUIData();
+                this.gui.updateListaPeticiones(friendRequests);
+                //this.updateGUIData();
             }else{
                 this.showError("No pudo borrarse la peticion de amistad");
             }
@@ -208,8 +208,8 @@ public class Client {
         try{
             this.friendRequests.add(friend); //esta puede que esté mal
             //this.gui.addFriendRequest(friend);
-            //this.gui.updateListaPeticiones(friendRequests);
-            this.updateGUIData();
+            this.gui.updateListaPeticiones(friendRequests);
+            //this.updateGUIData();
         }catch(Exception e){
             this.showError(e.toString());
         }
