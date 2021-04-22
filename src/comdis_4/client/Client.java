@@ -61,9 +61,6 @@ public class Client {
         List<String> friends = new ArrayList<String>();
         friends.addAll(friendsProxys.keySet());
         this.gui.updateData((ArrayList<String>) friends, friendRequests);
-        
-        System.out.println(this.friendRequests.toString());
-        System.out.println(this.friendsProxys.keySet().toString());
     }
     
     //CONNECTION FUNCTIONS

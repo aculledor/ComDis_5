@@ -127,7 +127,7 @@ public class ImpBD implements ImpBDInterface {
     public ArrayList<Request> getRequests() throws SQLException{
         try {
             Statement mystatement = database.createStatement();
-            ResultSet myresult = mystatement.executeQuery("SELECT * FROM Abraham.Request");
+            ResultSet myresult = mystatement.executeQuery("SELECT * FROM Abraham.Requests");
             ArrayList<Request> requests = new ArrayList<>();
             Request request;
             String source, destination;

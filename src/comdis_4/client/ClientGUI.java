@@ -37,7 +37,7 @@ public class ClientGUI extends javax.swing.JFrame {
     }
     
     public void showError(String message){
-        System.out.print(message);
+        System.out.println(message);
         this.verror = new VError(this, true, message);
         this.verror.pack();
         this.verror.setVisible(true);
