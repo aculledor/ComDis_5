@@ -143,8 +143,8 @@ public class Client {
             if(bool){
                 this.friendRequests.remove(friend);
                 //this.gui.removeFriendRequest(friend);
-                //this.gui.updateListaPeticiones(friendRequests);
-                this.updateGUIData();
+                this.gui.updateListaPeticiones(friendRequests);
+                //this.updateGUIData();
             }else{
                 this.showError("No pudo borrarse el usuario del servidor");
             }

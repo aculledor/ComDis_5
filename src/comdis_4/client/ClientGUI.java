@@ -109,11 +109,11 @@ public class ClientGUI extends javax.swing.JFrame {
     }
     
     public void updateChatPrint(){
+        this.chatTextArea.setText("");
         if (mListaConectados.getSize() > 0 && friendsList.getSelectedIndex() >= 0) {
-            this.chatTextArea.setText("");
-            for(String message : this.chatRepo.get(friendsList.getSelectedValue())){
+            this.chatRepo.get(friendsList.getSelectedValue()).forEach((message) -> {
                 this.chatTextArea.append(message);
-            }
+            });
         }
         this.repaint();
     }
@@ -143,7 +143,7 @@ public class ClientGUI extends javax.swing.JFrame {
     
     public void removeOnlineFriend(String friend){
         this.mListaConectados.borrarElemento(friend);
-        this.addFriendToChatRepo(friend);
+        this.removeFriendFromChatRepo(friend);
     }
     
     public void addFriendRequest(String friend){
@@ -592,7 +592,7 @@ public class ClientGUI extends javax.swing.JFrame {
     }//GEN-LAST:event_friendsListMouseClicked
 
     public void confirmSent(){
-        this.chatRepo.get(friendsList.getSelectedValue()).add("["+this.client.getNickname()+"] "+this.textToSendTXT.getText());
+        this.chatRepo.get(friendsList.getSelectedValue()).add("["+this.client.getNickname()+"] "+this.textToSendTXT.getText()+"\n");
         this.textToSendTXT.setText("");
         this.updateChatPrint();
     }
