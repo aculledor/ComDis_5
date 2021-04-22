@@ -49,7 +49,7 @@ public class ImpBD implements ImpBDInterface {
         try {
             Statement mystatement = database.createStatement();
             mystatement.execute("INSERT INTO Abraham.Requests (Source, Destination) VALUES ('"+source+"', '"+destination+"')");
-            return getSourceRequests(source);
+            return getRequestsFrom(source);
         } catch (SQLException e) {
             throw e;
         }
@@ -145,7 +145,7 @@ public class ImpBD implements ImpBDInterface {
     
     
     @Override
-    public ArrayList<String> getDestinationRequests(String destination) throws SQLException{
+    public ArrayList<String> getRequestsFor(String destination) throws SQLException{
         try {
             Statement mystatement = database.createStatement();
             ResultSet myresult = mystatement.executeQuery("SELECT * FROM Abraham.Requests WHERE Destination = '"+destination+"'");
@@ -163,7 +163,7 @@ public class ImpBD implements ImpBDInterface {
     
     
     @Override
-    public ArrayList<String> getSourceRequests(String source) throws SQLException{
+    public ArrayList<String> getRequestsFrom(String source) throws SQLException{
         try {
             Statement mystatement = database.createStatement();
             ResultSet myresult = mystatement.executeQuery("SELECT * FROM Abraham.Requests WHERE Source = '"+source+"'");

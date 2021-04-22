@@ -24,29 +24,31 @@ public class ServerGUI extends javax.swing.JFrame {
     int portNum = 7777;
     String registryURL;
     
-    private ServerImplementation imp;
+    
+    private ServerImplementation server;
+    
     
     /**
      * Creates new form ServerGUI
      */
-    public ServerGUI() {
+    public ServerGUI(ServerImplementation server) {
         initComponents();
-        this.start();
+        this.server = server;
     }
     
-    private void start(){
+    public void start(){
         try {
             //int RMIPortNum = Integer.parseInt(portNum);
             startRegistry(portNum, this);
-            imp = new ServerImplementation(this);
             registryURL = "rmi://localhost:" + portNum + "/P2P";
 
-            Naming.rebind(registryURL, imp);
+            Naming.rebind(registryURL, server);
             System.out.println("Server registered.  Registry currently contains:");
 
             // list names currently in the registry
             listRegistry(registryURL, this);
             System.out.println("P2P Server ready.");
+            this.setVisible(true);
         } catch (Exception ex) {
             setText(ex.getLocalizedMessage()+"\n");
         }
@@ -188,7 +190,7 @@ public class ServerGUI extends javax.swing.JFrame {
 
     private void usersBTNActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_usersBTNActionPerformed
         // TODO add your handling code here:
-        this.logArea.append(this.imp.getUsers()+"\n");
+        this.logArea.append(this.server.getUsers()+"\n");
     }//GEN-LAST:event_usersBTNActionPerformed
 
     

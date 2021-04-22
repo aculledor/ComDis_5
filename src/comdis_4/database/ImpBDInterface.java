@@ -40,11 +40,11 @@ public interface ImpBDInterface {
     //Returns the list of saved requests
     ArrayList<Request> getRequests() throws SQLException;
 
-    //Returns the list of saved requests where the given nickname is the destination user 
-    ArrayList<String> getDestinationRequests(String destination) throws SQLException;
+    //Returns the list of saved requests for the user 
+    ArrayList<String> getRequestsFor(String destination) throws SQLException;
 
-    //Returns the list of saved requests where the given nickname is the source user 
-    ArrayList<String> getSourceRequests(String source) throws SQLException;
+    //Returns the list of saved requests from the user 
+    ArrayList<String> getRequestsFrom(String source) throws SQLException;
 
     //Returns the user data with the given nickname or null
     ArrayList<String> getUser(String nickname) throws SQLException;

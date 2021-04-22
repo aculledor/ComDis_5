@@ -66,6 +66,10 @@ public class ClientGUI extends javax.swing.JFrame {
         this.client.connect();
     }
     
+    public void setInteractiveInit(Boolean bool){
+        this.vinicio.setInteractive(bool);
+    }
+    
     public void clearChatRepo(ArrayList<String> friends){
         this.chatRepo = new HashMap<>();
         ArrayList<String> aux;
@@ -80,6 +84,28 @@ public class ClientGUI extends javax.swing.JFrame {
         }else{
             this.repaint();
         }
+    }
+    
+    public void addFriendToChatRepo(String friend){
+        ArrayList<String> aux = new ArrayList<>();
+        aux.add("["+friend+"] está conectado\n");
+        this.chatRepo.put(friend, aux);
+        this.updateChatPrint();
+    }
+    
+    public void removeFriendFromChatRepo(String friend){
+        this.chatRepo.remove(friend);
+        this.updateChatPrint();
+    }
+    
+    public void updateListaPeticiones(ArrayList<String> requests){
+        this.mListaPeticiones = new ModeloListaStrings();
+        this.requestList.setModel(mListaPeticiones);
+        this.mListaPeticiones.setElementos(requests);
+        if (this.mListaConectados.getSize() > 0) {
+            this.requestList.setSelectedIndex(0);
+        }
+        this.repaint();
     }
     
     public void updateChatPrint(){
@@ -100,17 +126,36 @@ public class ClientGUI extends javax.swing.JFrame {
             this.friendsList.setSelectedIndex(0);
         }
         
-        this.mListaPeticiones = new ModeloListaStrings();
-        this.requestList.setModel(mListaPeticiones);
-        this.mListaPeticiones.setElementos(requests);
-        if (this.mListaConectados.getSize() > 0) {
-            this.requestList.setSelectedIndex(0);
-        }
+        friends.forEach((friend) -> {
+            this.addFriendToChatRepo(friend);
+        });
+        
+        this.updateListaPeticiones(requests);
+        
+        this.nameTag.setText(client.getNickname());
         this.repaint();
     }
     
+    public void addOnlineFriend(String friend){
+        this.mListaConectados.nuevoElemento(friend);
+        this.addFriendToChatRepo(friend);
+    }
+    
+    public void removeOnlineFriend(String friend){
+        this.mListaConectados.borrarElemento(friend);
+        this.addFriendToChatRepo(friend);
+    }
+    
+    public void addFriendRequest(String friend){
+        this.mListaPeticiones.nuevoElemento(friend);
+    }
+    
+    public void removeFriendRequest(String friend){
+        this.mListaConectados.borrarElemento(friend);
+    }
+    
     public void receiveMessage(String friend, String message){
-        this.chatRepo.get(friend).add("["+friend+"] "+ message);
+        this.chatRepo.get(friend).add("["+friend+"] "+ message + "\n");
         if (friendsList.getSelectedValue().equals(friend))
             this.updateChatPrint();
     }
@@ -134,6 +179,7 @@ public class ClientGUI extends javax.swing.JFrame {
         jPanel1 = new javax.swing.JPanel();
         disconnectBTN = new javax.swing.JButton();
         deleteUserBTN = new javax.swing.JButton();
+        nameTag = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jPanel4 = new javax.swing.JPanel();
@@ -189,6 +235,11 @@ public class ClientGUI extends javax.swing.JFrame {
             }
         });
 
+        nameTag.setFont(new java.awt.Font("Times New Roman", 0, 24)); // NOI18N
+        nameTag.setForeground(new java.awt.Color(0, 0, 0));
+        nameTag.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        nameTag.setText("Nombre");
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -196,7 +247,9 @@ public class ClientGUI extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(deleteUserBTN, javax.swing.GroupLayout.PREFERRED_SIZE, 182, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
+                .addComponent(nameTag, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(disconnectBTN, javax.swing.GroupLayout.PREFERRED_SIZE, 182, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(21, 21, 21))
         );
@@ -205,7 +258,9 @@ public class ClientGUI extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(deleteUserBTN, javax.swing.GroupLayout.DEFAULT_SIZE, 63, Short.MAX_VALUE)
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(deleteUserBTN, javax.swing.GroupLayout.DEFAULT_SIZE, 63, Short.MAX_VALUE)
+                        .addComponent(nameTag))
                     .addComponent(disconnectBTN, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
@@ -547,6 +602,7 @@ public class ClientGUI extends javax.swing.JFrame {
         if (mListaConectados.getSize() > 0 && friendsList.getSelectedIndex() >= 0) {
             this.client.sendMessage(friendsList.getSelectedValue(), this.textToSendTXT.getText());
         }
+        this.textToSendTXT.setText("");
     }//GEN-LAST:event_sendMessageTXTActionPerformed
 
     private void deleteUserBTNActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteUserBTNActionPerformed
@@ -557,6 +613,7 @@ public class ClientGUI extends javax.swing.JFrame {
     private void sendFriendRequestBTNActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sendFriendRequestBTNActionPerformed
         // TODO add your handling code here:
         this.client.sendFriendRequest(this.newFriendTXT.getText());
+        this.newFriendTXT.setText("");
     }//GEN-LAST:event_sendFriendRequestBTNActionPerformed
 
 
@@ -585,6 +642,7 @@ public class ClientGUI extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JSeparator jSeparator1;
+    private javax.swing.JLabel nameTag;
     private javax.swing.JTextField newFriendTXT;
     private javax.swing.JList<String> requestList;
     private javax.swing.JButton sendFriendRequestBTN;

@@ -36,6 +36,13 @@ public class ModeloListaStrings extends javax.swing.AbstractListModel {
         fireIntervalRemoved(this, i, i);
     }
 
+    public void borrarElemento(String e) {
+        int i;
+        i = this.elementos.indexOf(e);
+        this.elementos.remove(i);
+        fireIntervalRemoved(this, i, i);
+    }
+
     public void setElementos(java.util.List<String> elementos) {
         this.elementos = elementos;
         fireContentsChanged(this, 0, elementos.size() - 1);

@@ -56,7 +56,7 @@ import java.util.Map;
     }
     
     public Boolean rejectFriendRequest(String friend) throws NotBoundException, MalformedURLException, RemoteException{
-        return server.acceptFriendRequest(client.getNickname(), client.getPassword(), friend);
+        return server.rejectFriendRequest(client.getNickname(), client.getPassword(), friend);
     }
 
     
