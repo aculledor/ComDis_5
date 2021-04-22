@@ -139,9 +139,7 @@ public class Client {
             Boolean bool = this.proxy.acceptFriendRequest(friend);
             if(bool){
                 this.friendRequests.remove(friend);
-                //this.gui.removeFriendRequest(friend);
                 this.gui.updateListaPeticiones(friendRequests);
-                //this.updateGUIData();
             }else{
                 this.showError("No pudo aceptarse la peticion de amistad");
             }
@@ -157,9 +155,7 @@ public class Client {
             Boolean bool = this.proxy.rejectFriendRequest(friend);
             if(bool){
                 this.friendRequests.remove(friend);
-                //this.gui.removeFriendRequest(friend);
                 this.gui.updateListaPeticiones(friendRequests);
-                //this.updateGUIData();
             }else{
                 this.showError("No pudo borrarse la peticion de amistad");
             }
@@ -173,8 +169,6 @@ public class Client {
     public void sendMessage(String friend, String message){
         try{
             this.friendsProxys.get(friend).receiveMessage(nickname, message);
-            //ClientInterface aux =  this.friendsProxys.get(friend);
-            //aux.receiveMessage(nickname, message);
             this.gui.confirmSent();
         }catch(RemoteException e){
             this.showError(e.toString());
@@ -191,6 +185,17 @@ public class Client {
             }
             Boolean bool = this.proxy.createFriendRequest(friend);
             if(!bool) this.showError("No pudo crearse la peticion de amistad");
+        }catch(MalformedURLException | NotBoundException | RemoteException e){
+            this.showError(e.toString());
+        }catch(NullPointerException e){
+            this.showError("Ocurrió un error insesperado");
+        }
+    }
+    
+    public void removeFriend(String friend){
+        try{
+            Boolean bool = this.proxy.removeFriend(friend);
+            if(!bool) this.showError("No pudo eliminarse la amistad");
         }catch(MalformedURLException | NotBoundException | RemoteException e){
             this.showError(e.toString());
         }catch(NullPointerException e){

@@ -206,8 +206,8 @@ public class ServerImplementation extends UnicastRemoteObject implements ServerI
             gui.appendText("Amistad entre ["+nickname+"] y ["+friend+"] eliminada");
             if(onlineClients.keySet().contains(friend)){
                 onlineClients.get(friend).receiveMessage(name, "El usuario ["+nickname+"] te ha eliminado de amigos" );
-                onlineClients.get(nickname).receiveFriendRequest(friend);
-                onlineClients.get(friend).receiveFriendRequest(nickname);
+                onlineClients.get(nickname).removeFriendFromList(friend);
+                onlineClients.get(friend).removeFriendFromList(nickname);
             }
             return true;
         } catch (SQLException ex) {

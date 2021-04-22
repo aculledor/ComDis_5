@@ -205,6 +205,7 @@ public class ClientGUI extends javax.swing.JFrame {
         jLabel7 = new javax.swing.JLabel();
         jScrollPane4 = new javax.swing.JScrollPane();
         serverTXTArea = new javax.swing.JTextArea();
+        deleteFriendshipBTN = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -455,6 +456,16 @@ public class ClientGUI extends javax.swing.JFrame {
         serverTXTArea.setRows(5);
         jScrollPane4.setViewportView(serverTXTArea);
 
+        deleteFriendshipBTN.setBackground(new java.awt.Color(255, 51, 51));
+        deleteFriendshipBTN.setFont(new java.awt.Font("Times New Roman", 0, 18)); // NOI18N
+        deleteFriendshipBTN.setForeground(new java.awt.Color(0, 0, 0));
+        deleteFriendshipBTN.setText("BORRAR AMISTAD");
+        deleteFriendshipBTN.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                deleteFriendshipBTNActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
@@ -466,17 +477,18 @@ public class ClientGUI extends javax.swing.JFrame {
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addContainerGap()
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jScrollPane2)
                             .addComponent(jScrollPane3)
-                            .addGroup(jPanel3Layout.createSequentialGroup()
-                                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel5)
-                                    .addComponent(jLabel6)
-                                    .addGroup(jPanel3Layout.createSequentialGroup()
-                                        .addComponent(textToSendTXT, javax.swing.GroupLayout.PREFERRED_SIZE, 415, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                        .addComponent(sendMessageTXT)))
-                                .addGap(0, 0, Short.MAX_VALUE)))))
+                            .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addComponent(jLabel5)
+                                .addComponent(jLabel6)
+                                .addGroup(jPanel3Layout.createSequentialGroup()
+                                    .addComponent(textToSendTXT, javax.swing.GroupLayout.PREFERRED_SIZE, 415, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                    .addComponent(sendMessageTXT))
+                                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                                    .addComponent(jScrollPane2)
+                                    .addGap(18, 18, 18)
+                                    .addComponent(deleteFriendshipBTN))))))
                 .addGap(9, 9, 9)
                 .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 2, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -515,7 +527,11 @@ public class ClientGUI extends javax.swing.JFrame {
                             .addGroup(jPanel3Layout.createSequentialGroup()
                                 .addComponent(jLabel5)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 237, Short.MAX_VALUE)
+                                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 237, Short.MAX_VALUE)
+                                    .addGroup(jPanel3Layout.createSequentialGroup()
+                                        .addGap(0, 0, Short.MAX_VALUE)
+                                        .addComponent(deleteFriendshipBTN)))
                                 .addGap(18, 18, 18)
                                 .addComponent(jLabel6)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -616,11 +632,19 @@ public class ClientGUI extends javax.swing.JFrame {
         this.newFriendTXT.setText("");
     }//GEN-LAST:event_sendFriendRequestBTNActionPerformed
 
+    private void deleteFriendshipBTNActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteFriendshipBTNActionPerformed
+        // TODO add your handling code here:
+        if (mListaConectados.getSize() > 0 && friendsList.getSelectedIndex() >= 0) {
+            this.client.removeFriend(friendsList.getSelectedValue());
+        }
+    }//GEN-LAST:event_deleteFriendshipBTNActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton acceptRequestBTN;
     private javax.swing.JButton acceptRequestBTN1;
     private javax.swing.JTextArea chatTextArea;
+    private javax.swing.JButton deleteFriendshipBTN;
     private javax.swing.JButton deleteUserBTN;
     private javax.swing.JButton disconnectBTN;
     private javax.swing.JList<String> friendsList;
