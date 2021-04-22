@@ -172,7 +172,9 @@ public class Client {
     
     public void sendMessage(String friend, String message){
         try{
-            this.getFriendsProxys().get(friend).receiveMessage(nickname, message);
+            this.friendsProxys.get(friend).receiveMessage(nickname, message);
+            //ClientInterface aux =  this.friendsProxys.get(friend);
+            //aux.receiveMessage(nickname, message);
             this.gui.confirmSent();
         }catch(RemoteException e){
             this.showError(e.toString());

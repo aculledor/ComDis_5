@@ -156,7 +156,7 @@ public class ClientGUI extends javax.swing.JFrame {
     
     public void receiveMessage(String friend, String message){
         this.chatRepo.get(friend).add("["+friend+"] "+ message + "\n");
-        if (friendsList.getSelectedValue().equals(friend))
+        if (friendsList.getSelectedValue() != null && friendsList.getSelectedValue().equals(friend))
             this.updateChatPrint();
     }
     
