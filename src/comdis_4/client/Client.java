@@ -186,6 +186,10 @@ public class Client {
     
     public void sendFriendRequest(String friend){
         try{
+            if(this.friendRequests.contains(friend)){
+                this.acceptFriendRequest(friend);
+                return;
+            }
             Boolean bool = this.proxy.createFriendRequest(friend);
             if(!bool) this.showError("No pudo crearse la peticion de amistad");
         }catch(MalformedURLException | NotBoundException | RemoteException e){
