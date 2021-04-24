@@ -25,6 +25,10 @@ public class ClientGUI extends javax.swing.JFrame {
     private VRenew vrenew;
     private VError verror;
     private Integer currentSecond;
+    private XYSeries series;
+    private XYSeriesCollection dataset;
+    private JFreeChart chart;
+    private ChartPanel chartPanelAux;
 
     /**
      * Creates new form ClientGUI
@@ -36,34 +40,17 @@ public class ClientGUI extends javax.swing.JFrame {
         this.currentSecond = 0;
         this.setLocationRelativeTo(null);
         this.chartPanel.setLayout(new BorderLayout());
-        this.repaint();
-    }
-    
-    public void drawChart(Double newData){
-//        JFrame window = new JFrame();
-//        window.setTitle("UNGA");
-//        window.setSize(600, 400);
-//        window.setLayout(new BorderLayout());
-//        window.setDefaultCloseOperation((JFrame.EXIT_ON_CLOSE));
-//        
-//        window.add(new ChartPanel(chart), BorderLayout.CENTER);
-//        window.setVisible(true);
-
-        XYSeries series = new XYSeries("Tiempo entre latidos");
-        XYSeriesCollection dataset = new XYSeriesCollection(series);
-        JFreeChart chart = ChartFactory.createXYLineChart(
+        series = new XYSeries("Tiempo entre latidos");
+        dataset = new XYSeriesCollection(series);
+        chart = ChartFactory.createXYLineChart(
                 "Tiempo entre latidos",                     //Title
                 "Tiempo", "Separación entre latidos",       //xAxisLabel, yAxisLabel
                 dataset,                                    //XYDataset
-                PlotOrientation.HORIZONTAL,                   //PlotOrientation
-                true, false, false);                         //Legend, Tooltip, urls
-        
-        this.currentSecond++;
-        series.add(currentSecond.doubleValue(), newData);
-        ChartPanel chartPanel = new ChartPanel(chart);
-        this.chartPanel.removeAll();    
-        this.chartPanel.add(chartPanel, BorderLayout.CENTER);
-        this.chartPanel.validate();      
+                PlotOrientation.VERTICAL,                   //PlotOrientation
+                false, false, false);                       //Legend, Tooltip, urls
+        chartPanelAux = new ChartPanel(chart);
+        this.chartPanel.add(chartPanelAux, BorderLayout.CENTER);
+        this.repaint();
     }
     
     public void startVInicio(){
@@ -119,8 +106,9 @@ public class ClientGUI extends javax.swing.JFrame {
     }
     
     public void receiveData(Double data){
-        this.serverTXTArea.append("[Data] " + data+"\n");
-        this.drawChart(data);
+        this.currentSecond++;
+        series.add(currentSecond.doubleValue(), data);
+        this.chartPanel.validate();  
         this.repaint();
     }
 
@@ -137,6 +125,7 @@ public class ClientGUI extends javax.swing.JFrame {
         jPanel1 = new javax.swing.JPanel();
         renewBTN = new javax.swing.JButton();
         unsubBTN = new javax.swing.JButton();
+        resubBTN = new javax.swing.JButton();
         jPanel6 = new javax.swing.JPanel();
         jLabel7 = new javax.swing.JLabel();
         jScrollPane4 = new javax.swing.JScrollPane();
@@ -172,6 +161,16 @@ public class ClientGUI extends javax.swing.JFrame {
             }
         });
 
+        resubBTN.setBackground(new java.awt.Color(204, 204, 255));
+        resubBTN.setFont(new java.awt.Font("Times New Roman", 0, 18)); // NOI18N
+        resubBTN.setForeground(new java.awt.Color(0, 0, 0));
+        resubBTN.setText("RESUBSCRIBIRSE");
+        resubBTN.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                resubBTNActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -179,7 +178,9 @@ public class ClientGUI extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(unsubBTN)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 684, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 251, Short.MAX_VALUE)
+                .addComponent(resubBTN)
+                .addGap(250, 250, 250)
                 .addComponent(renewBTN, javax.swing.GroupLayout.PREFERRED_SIZE, 182, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(21, 21, 21))
         );
@@ -187,8 +188,10 @@ public class ClientGUI extends javax.swing.JFrame {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(unsubBTN, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(unsubBTN, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(resubBTN, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(renewBTN, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
@@ -313,7 +316,14 @@ public class ClientGUI extends javax.swing.JFrame {
     private void unsubBTNActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_unsubBTNActionPerformed
         // TODO add your handling code here:
         this.client.disconnect();
+        this.dispose();
     }//GEN-LAST:event_unsubBTNActionPerformed
+
+    private void resubBTNActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resubBTNActionPerformed
+        // TODO add your handling code here:
+        this.client.start();
+        this.dispose();
+    }//GEN-LAST:event_resubBTNActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -326,6 +336,7 @@ public class ClientGUI extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel7;
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JButton renewBTN;
+    private javax.swing.JButton resubBTN;
     private javax.swing.JTextArea serverTXTArea;
     private javax.swing.JButton unsubBTN;
     // End of variables declaration//GEN-END:variables

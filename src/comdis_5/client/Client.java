@@ -8,10 +8,6 @@ package comdis_5.client;
 import java.net.MalformedURLException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
 /**
  *
  * @author aculledor
@@ -75,8 +71,7 @@ public class Client {
         try{
             Boolean bool = proxy.disconnect();
             if(bool){
-                this.gui.setVisible(false);
-                this.gui.startVInicio();
+                this.start();
             }else{
                 this.showError("No pudo desconectarse del servidor");
             }
