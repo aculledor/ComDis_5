@@ -67,7 +67,7 @@ public class VInicio extends javax.swing.JDialog {
         signUpBTN.setBackground(new java.awt.Color(204, 204, 255));
         signUpBTN.setFont(new java.awt.Font("Times New Roman", 0, 18)); // NOI18N
         signUpBTN.setForeground(new java.awt.Color(0, 0, 0));
-        signUpBTN.setText("Darse de alta");
+        signUpBTN.setText("DARSE DE ALTA");
         signUpBTN.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 signUpBTNActionPerformed(evt);
@@ -76,7 +76,7 @@ public class VInicio extends javax.swing.JDialog {
 
         jLabel2.setFont(new java.awt.Font("Times New Roman", 0, 18)); // NOI18N
         jLabel2.setForeground(new java.awt.Color(0, 0, 0));
-        jLabel2.setText("Tiempo de Subscripcion inicial");
+        jLabel2.setText("Tiempo de Subscripcion inicial en segundos");
 
         secondsTXT.setFont(new java.awt.Font("Times New Roman", 0, 18)); // NOI18N
         secondsTXT.setToolTipText("");
@@ -99,7 +99,7 @@ public class VInicio extends javax.swing.JDialog {
         closeBTN.setBackground(new java.awt.Color(255, 51, 51));
         closeBTN.setFont(new java.awt.Font("Times New Roman", 0, 18)); // NOI18N
         closeBTN.setForeground(new java.awt.Color(0, 0, 0));
-        closeBTN.setText("Cerrar");
+        closeBTN.setText("CERRAR");
         closeBTN.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 closeBTNActionPerformed(evt);
@@ -121,7 +121,7 @@ public class VInicio extends javax.swing.JDialog {
                         .addComponent(defaultBTN))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel2)
-                        .addGap(0, 191, Short.MAX_VALUE))
+                        .addGap(0, 98, Short.MAX_VALUE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(closeBTN)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
