@@ -1,11 +1,20 @@
 package comdis_5.server;
 
 import comdis_5.client.ClientInterface;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.rmi.*;
 import java.rmi.server.*;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Scanner;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * This class implements the remote interface HelloInterface.
@@ -16,7 +25,7 @@ public class ServerImplementation extends UnicastRemoteObject implements ServerI
     
     private final HashMap<ClientInterface, Integer> onlineClients;
     private ServerGUI gui;
-    private final String name = "Server_P2P";
+    private ScheduledFuture<?> beeperHandle;
 
     public String getUsers(){
         return this.onlineClients.keySet().toString();
@@ -30,6 +39,40 @@ public class ServerImplementation extends UnicastRemoteObject implements ServerI
     public void start(){
         gui = new ServerGUI(this);
         gui.start();
+        try{
+            File myObj = new File("rr1.txt");
+            Scanner myReader = new Scanner(myObj);
+            ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+            Runnable beeper = () -> {
+                if (myReader.hasNextLine()) {
+                    String data = myReader.nextLine();
+                    System.out.println(data);
+                    onlineClients.keySet().forEach((client) -> {
+                        try {
+                            if(onlineClients.get(client) == 0){
+                                onlineClients.remove(client);
+                                client.receiveMessage("Tu subscripcion ha caducado y has sido eliminado de la lista de mensajería.");
+                                gui.appendText("Borrando a ["+client.toString()+"] por timeout.");
+                            }else{
+                                client.receiveData(Double.parseDouble(data));
+                                onlineClients.put(client, onlineClients.get(client) - 1);
+                            }
+                        } catch (RemoteException ex) {
+                            gui.appendText("Conexion con ["+client.toString()+"] no conseguida. Borrandolo del sistema.");
+                            onlineClients.remove(client);
+                        }
+                    });
+                }
+                else beeperHandle.cancel(true);
+            };
+            beeperHandle = scheduler.scheduleAtFixedRate(beeper, 0, 1, TimeUnit.SECONDS);
+        }catch(FileNotFoundException ex){
+            ex.printStackTrace();
+        }
+    }
+    
+    public void turnOff(){
+        beeperHandle.cancel(true);
     }
 
     @Override

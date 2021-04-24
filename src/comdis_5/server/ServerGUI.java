@@ -106,6 +106,11 @@ public class ServerGUI extends javax.swing.JFrame {
         usersBTN = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                formWindowClosing(evt);
+            }
+        });
 
         jPanel1.setBackground(new java.awt.Color(204, 255, 204));
 
@@ -191,6 +196,11 @@ public class ServerGUI extends javax.swing.JFrame {
         // TODO add your handling code here:
         this.logArea.append(this.server.getUsers()+"\n");
     }//GEN-LAST:event_usersBTNActionPerformed
+
+    private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
+        // TODO add your handling code here:
+        this.server.turnOff();
+    }//GEN-LAST:event_formWindowClosing
 
     
 
