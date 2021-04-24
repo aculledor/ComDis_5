@@ -26,6 +26,8 @@ public class ClientGUI extends javax.swing.JFrame {
     }
     
     public void start(){
+        this.serverTXTArea.setText("");
+        this.setVisible(false);
         this.vinicio = new VInicio(this, true);
         this.vinicio.pack();
         this.vinicio.setVisible(true);

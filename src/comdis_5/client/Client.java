@@ -80,7 +80,7 @@ public class Client {
         try{
             Boolean bool = proxy.disconnect();
             if(bool){
-                this.gui.dispose();
+                this.gui.start();
             }else{
                 this.showError("No pudo desconectarse del servidor");
             }

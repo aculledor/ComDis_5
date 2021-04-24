@@ -54,9 +54,10 @@ public class VInicio extends javax.swing.JDialog {
         closeBTN = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setMinimumSize(new java.awt.Dimension(436, 340));
+        setMaximumSize(new java.awt.Dimension(436, 215));
+        setMinimumSize(new java.awt.Dimension(436, 215));
         setResizable(false);
-        setSize(new java.awt.Dimension(436, 340));
+        setSize(new java.awt.Dimension(436, 215));
 
         jPanel1.setBackground(new java.awt.Color(204, 255, 204));
         jPanel1.setMaximumSize(new java.awt.Dimension(436, 215));
