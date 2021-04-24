@@ -28,7 +28,7 @@ public class Client {
     
     public void start(){
         gui = new ClientGUI(this);
-        gui.start();
+        gui.startVInicio();
     }
     
     private void showError(String message){
@@ -60,14 +60,9 @@ public class Client {
     
     public void renew(){
         try{
-            proxy = new ClientImplementation(this);
-            Boolean bool = proxy.connect();
-            if(bool){
-                this.gui.cerrarInicio();
-                this.gui.setVisible(true);
-            }else{
+            Boolean bool = proxy.renew();
+            if(!bool){
                 this.showError("No pudo conectarse al servidor");
-                this.gui.setInteractiveInit(true);
             }
         }catch(MalformedURLException | NotBoundException | RemoteException e){
             this.showError(e.getLocalizedMessage());
@@ -80,7 +75,8 @@ public class Client {
         try{
             Boolean bool = proxy.disconnect();
             if(bool){
-                this.gui.start();
+                this.gui.setVisible(false);
+                this.gui.startVInicio();
             }else{
                 this.showError("No pudo desconectarse del servidor");
             }

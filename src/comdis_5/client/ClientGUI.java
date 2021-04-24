@@ -14,6 +14,7 @@ import java.util.ArrayList;
 public class ClientGUI extends javax.swing.JFrame {
     private final Client client;
     private VInicio vinicio;
+    private VRenew vrenew;
     private VError verror;
 
     /**
@@ -25,12 +26,16 @@ public class ClientGUI extends javax.swing.JFrame {
         this.client = client;
     }
     
-    public void start(){
-        this.serverTXTArea.setText("");
-        this.setVisible(false);
+    public void startVInicio(){
         this.vinicio = new VInicio(this, true);
         this.vinicio.pack();
         this.vinicio.setVisible(true);
+    }
+    
+    public void startVRenew(){
+        this.vrenew = new VRenew(this, true);
+        this.vrenew.pack();
+        this.vrenew.setVisible(true);
     }
     
     public void showError(String message){
@@ -56,6 +61,12 @@ public class ClientGUI extends javax.swing.JFrame {
     public void subscribe(String server, Integer seconds){
         this.client.setRegistry(server).setSeconds(seconds);
         this.client.subscribe();
+    }
+    
+    public void renew(Integer seconds){
+        this.client.setSeconds(seconds);
+        this.client.renew();
+        this.vrenew.dispose();
     }
     
     public void setInteractiveInit(Boolean bool){
@@ -237,7 +248,7 @@ public class ClientGUI extends javax.swing.JFrame {
 
     private void renewBTNActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_renewBTNActionPerformed
         // TODO add your handling code here:
-        this.client.renew();
+        this.startVRenew();
     }//GEN-LAST:event_renewBTNActionPerformed
 
     

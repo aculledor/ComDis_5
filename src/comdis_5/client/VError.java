@@ -54,7 +54,7 @@ public class VError extends javax.swing.JDialog {
         jScrollPane1.setViewportView(text);
 
         closeBTN.setFont(new java.awt.Font("Times New Roman", 0, 18)); // NOI18N
-        closeBTN.setText("Cerrar");
+        closeBTN.setText("CERRAR");
         closeBTN.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 closeBTNActionPerformed(evt);

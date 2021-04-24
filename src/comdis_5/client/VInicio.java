@@ -89,7 +89,7 @@ public class VInicio extends javax.swing.JDialog {
         jLabel3.setText("Server");
 
         defaultBTN.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
-        defaultBTN.setText("Default");
+        defaultBTN.setText("DEFAULT");
         defaultBTN.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 defaultBTNActionPerformed(evt);
