@@ -27,10 +27,6 @@ public class ServerImplementation extends UnicastRemoteObject implements ServerI
     private final HashMap<ClientInterface, Integer> onlineClients;
     private ServerGUI gui;
     private ScheduledFuture<?> beeperHandle;
-
-    public String getUsers(){
-        return this.onlineClients.keySet().toString();
-    }
     
     public ServerImplementation() throws RemoteException, SQLException {
         super();
@@ -81,6 +77,10 @@ public class ServerImplementation extends UnicastRemoteObject implements ServerI
     
     public void turnOff(){
         beeperHandle.cancel(true);
+    }
+
+    public String getUsers(){
+        return this.onlineClients.keySet().toString();
     }
 
     @Override

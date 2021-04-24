@@ -4,10 +4,6 @@ import comdis_5.server.ServerInterface;
 import java.net.MalformedURLException;
 import java.rmi.*;
 import java.rmi.server.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * This class implements the remote interface HelloInterface.

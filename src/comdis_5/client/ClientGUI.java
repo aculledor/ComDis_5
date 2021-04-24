@@ -5,8 +5,16 @@
  */
 package comdis_5.client;
 
+import java.awt.BorderLayout;
 import java.util.ArrayList;
-
+import javax.swing.JFrame;
+import javax.swing.SwingUtilities;
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.data.xy.XYSeries;
+import org.jfree.data.xy.XYSeriesCollection;
 /**
  *
  * @author aculledor
@@ -16,6 +24,7 @@ public class ClientGUI extends javax.swing.JFrame {
     private VInicio vinicio;
     private VRenew vrenew;
     private VError verror;
+    private Integer currentSecond;
 
     /**
      * Creates new form ClientGUI
@@ -24,6 +33,37 @@ public class ClientGUI extends javax.swing.JFrame {
     public ClientGUI(Client client) {
         initComponents();
         this.client = client;
+        this.currentSecond = 0;
+        this.setLocationRelativeTo(null);
+        this.chartPanel.setLayout(new BorderLayout());
+        this.repaint();
+    }
+    
+    public void drawChart(Double newData){
+//        JFrame window = new JFrame();
+//        window.setTitle("UNGA");
+//        window.setSize(600, 400);
+//        window.setLayout(new BorderLayout());
+//        window.setDefaultCloseOperation((JFrame.EXIT_ON_CLOSE));
+//        
+//        window.add(new ChartPanel(chart), BorderLayout.CENTER);
+//        window.setVisible(true);
+
+        XYSeries series = new XYSeries("Tiempo entre latidos");
+        XYSeriesCollection dataset = new XYSeriesCollection(series);
+        JFreeChart chart = ChartFactory.createXYLineChart(
+                "Tiempo entre latidos",                     //Title
+                "Tiempo", "Separación entre latidos",       //xAxisLabel, yAxisLabel
+                dataset,                                    //XYDataset
+                PlotOrientation.HORIZONTAL,                   //PlotOrientation
+                true, false, false);                         //Legend, Tooltip, urls
+        
+        this.currentSecond++;
+        series.add(currentSecond.doubleValue(), newData);
+        ChartPanel chartPanel = new ChartPanel(chart);
+        this.chartPanel.removeAll();    
+        this.chartPanel.add(chartPanel, BorderLayout.CENTER);
+        this.chartPanel.validate();      
     }
     
     public void startVInicio(){
@@ -80,6 +120,7 @@ public class ClientGUI extends javax.swing.JFrame {
     
     public void receiveData(Double data){
         this.serverTXTArea.append("[Data] " + data+"\n");
+        this.drawChart(data);
         this.repaint();
     }
 
@@ -102,6 +143,7 @@ public class ClientGUI extends javax.swing.JFrame {
         serverTXTArea = new javax.swing.JTextArea();
         jPanel7 = new javax.swing.JPanel();
         jLabel8 = new javax.swing.JLabel();
+        chartPanel = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -208,17 +250,30 @@ public class ClientGUI extends javax.swing.JFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
+        javax.swing.GroupLayout chartPanelLayout = new javax.swing.GroupLayout(chartPanel);
+        chartPanel.setLayout(chartPanelLayout);
+        chartPanelLayout.setHorizontalGroup(
+            chartPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 0, Short.MAX_VALUE)
+        );
+        chartPanelLayout.setVerticalGroup(
+            chartPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 428, Short.MAX_VALUE)
+        );
+
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addGroup(jPanel3Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jScrollPane4)
-                .addContainerGap())
             .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, 1085, Short.MAX_VALUE)
             .addComponent(jPanel7, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 1085, Short.MAX_VALUE)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(chartPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jScrollPane4))
+                .addContainerGap())
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -228,7 +283,9 @@ public class ClientGUI extends javax.swing.JFrame {
                 .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(jPanel7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 464, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
+                .addComponent(chartPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
@@ -260,6 +317,7 @@ public class ClientGUI extends javax.swing.JFrame {
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JPanel chartPanel;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JPanel jPanel1;

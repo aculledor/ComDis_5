@@ -58,6 +58,11 @@ public class VInicio extends javax.swing.JDialog {
         setMinimumSize(new java.awt.Dimension(436, 215));
         setResizable(false);
         setSize(new java.awt.Dimension(436, 215));
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                formWindowClosing(evt);
+            }
+        });
 
         jPanel1.setBackground(new java.awt.Color(204, 255, 204));
         jPanel1.setMaximumSize(new java.awt.Dimension(436, 215));
@@ -179,6 +184,11 @@ public class VInicio extends javax.swing.JDialog {
         this.setInteractive(false);
         this.padre.subscribe(this.serverTXT.getText(), Integer.parseInt(this.secondsTXT.getText()));
     }//GEN-LAST:event_signUpBTNActionPerformed
+
+    private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
+        // TODO add your handling code here:
+        this.padre.closeApp();
+    }//GEN-LAST:event_formWindowClosing
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
