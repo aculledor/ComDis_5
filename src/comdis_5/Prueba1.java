@@ -3,12 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package comdis_4;
+package comdis_5;
 
 
-import comdis_4.client.Client;
-import comdis_4.database.ImpBD;
-import comdis_4.server.ServerImplementation;
+import comdis_5.client.Client;
+import comdis_5.database.ImpBD;
+import comdis_5.server.ServerImplementation;
 import java.util.ArrayList;
 
 /**

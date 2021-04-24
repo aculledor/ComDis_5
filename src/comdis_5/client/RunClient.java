@@ -1,6 +1,6 @@
-package comdis_4.client;
+package comdis_5.client;
 
-import comdis_4.client.Client;
+import comdis_5.client.Client;
 
 
 /**

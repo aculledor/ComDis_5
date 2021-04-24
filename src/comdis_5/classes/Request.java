@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package comdis_4.classes;
+package comdis_5.classes;
 
 import java.io.Serializable;
 

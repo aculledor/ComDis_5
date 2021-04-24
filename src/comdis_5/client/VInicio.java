@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package comdis_4.client;
+package comdis_5.client;
 
 /**
  *
@@ -59,7 +59,6 @@ public class VInicio extends javax.swing.JDialog {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setMinimumSize(new java.awt.Dimension(436, 340));
-        setPreferredSize(new java.awt.Dimension(436, 340));
         setResizable(false);
         setSize(new java.awt.Dimension(436, 340));
 

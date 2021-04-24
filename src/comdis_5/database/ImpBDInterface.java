@@ -3,9 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package comdis_4.database;
+package comdis_5.database;
 
-import comdis_4.classes.Request;
+import comdis_5.classes.Request;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;

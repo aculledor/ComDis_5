@@ -3,9 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package comdis_4.server;
+package comdis_5.server;
 
-import comdis_4.database.ImpBD;
+import comdis_5.database.ImpBD;
 import java.net.MalformedURLException;
 import java.rmi.Naming;
 import java.rmi.RemoteException;

@@ -1,7 +1,7 @@
-package comdis_4.server;
+package comdis_5.server;
 
-import comdis_4.client.ClientInterface;
-import comdis_4.database.ImpBD;
+import comdis_5.client.ClientInterface;
+import comdis_5.database.ImpBD;
 import java.rmi.*;
 import java.rmi.server.*;
 import java.sql.SQLException;

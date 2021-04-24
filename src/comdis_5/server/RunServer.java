@@ -1,6 +1,6 @@
-package comdis_4.server;
+package comdis_5.server;
 
-import comdis_4.ServerGUI_Ex;
+import comdis_5.ServerGUI_Ex;
 import java.rmi.RemoteException;
 import java.sql.SQLException;
 

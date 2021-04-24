@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package comdis_4.client;
+package comdis_5.client;
 
 import java.net.MalformedURLException;
 import java.rmi.NotBoundException;

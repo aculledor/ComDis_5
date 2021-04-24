@@ -1,4 +1,4 @@
-package comdis_4.client;
+package comdis_5.client;
 
 // A simple RMI interface file - M. Liu
 import java.rmi.*;
