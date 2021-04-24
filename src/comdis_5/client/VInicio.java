@@ -5,6 +5,7 @@
  */
 package comdis_5.client;
 
+
 /**
  *
  * @author aculledor
@@ -24,10 +25,8 @@ public class VInicio extends javax.swing.JDialog {
     
     public void setInteractive(Boolean bool){
         this.defaultBTN.setEnabled(bool);
-        this.regisBTN.setEnabled(bool);
         this.signUpBTN.setEnabled(bool);
-        this.nameTXT.setEnabled(bool);
-        this.passTXT.setEnabled(bool);
+        this.secondsTXT.setEnabled(bool);
         this.serverTXT.setEnabled(bool);
     }
     
@@ -47,11 +46,8 @@ public class VInicio extends javax.swing.JDialog {
 
         jPanel1 = new javax.swing.JPanel();
         signUpBTN = new javax.swing.JButton();
-        jLabel1 = new javax.swing.JLabel();
-        passTXT = new javax.swing.JTextField();
         jLabel2 = new javax.swing.JLabel();
-        nameTXT = new javax.swing.JTextField();
-        regisBTN = new javax.swing.JButton();
+        secondsTXT = new javax.swing.JTextField();
         serverTXT = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
         defaultBTN = new javax.swing.JButton();
@@ -63,8 +59,9 @@ public class VInicio extends javax.swing.JDialog {
         setSize(new java.awt.Dimension(436, 340));
 
         jPanel1.setBackground(new java.awt.Color(204, 255, 204));
-        jPanel1.setMinimumSize(new java.awt.Dimension(436, 340));
-        jPanel1.setPreferredSize(new java.awt.Dimension(436, 340));
+        jPanel1.setMaximumSize(new java.awt.Dimension(436, 215));
+        jPanel1.setMinimumSize(new java.awt.Dimension(436, 215));
+        jPanel1.setPreferredSize(new java.awt.Dimension(436, 215));
 
         signUpBTN.setBackground(new java.awt.Color(204, 204, 255));
         signUpBTN.setFont(new java.awt.Font("Times New Roman", 0, 18)); // NOI18N
@@ -76,27 +73,12 @@ public class VInicio extends javax.swing.JDialog {
             }
         });
 
-        jLabel1.setFont(new java.awt.Font("Times New Roman", 0, 18)); // NOI18N
-        jLabel1.setForeground(new java.awt.Color(0, 0, 0));
-        jLabel1.setText("Contraseña");
-
-        passTXT.setFont(new java.awt.Font("Times New Roman", 0, 18)); // NOI18N
-
         jLabel2.setFont(new java.awt.Font("Times New Roman", 0, 18)); // NOI18N
         jLabel2.setForeground(new java.awt.Color(0, 0, 0));
-        jLabel2.setText("Nombre");
+        jLabel2.setText("Tiempo de Subscripcion inicial");
 
-        nameTXT.setFont(new java.awt.Font("Times New Roman", 0, 18)); // NOI18N
-
-        regisBTN.setBackground(new java.awt.Color(255, 255, 204));
-        regisBTN.setFont(new java.awt.Font("Times New Roman", 0, 18)); // NOI18N
-        regisBTN.setForeground(new java.awt.Color(0, 0, 0));
-        regisBTN.setText("Iniciar sesión");
-        regisBTN.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                regisBTNActionPerformed(evt);
-            }
-        });
+        secondsTXT.setFont(new java.awt.Font("Times New Roman", 0, 18)); // NOI18N
+        secondsTXT.setToolTipText("");
 
         serverTXT.setFont(new java.awt.Font("Times New Roman", 0, 18)); // NOI18N
         serverTXT.setText("rmi://localhost:7777/P2P");
@@ -113,8 +95,9 @@ public class VInicio extends javax.swing.JDialog {
             }
         });
 
-        closeBTN.setBackground(new java.awt.Color(255, 102, 102));
-        closeBTN.setFont(new java.awt.Font("Times New Roman", 1, 14)); // NOI18N
+        closeBTN.setBackground(new java.awt.Color(255, 51, 51));
+        closeBTN.setFont(new java.awt.Font("Times New Roman", 0, 18)); // NOI18N
+        closeBTN.setForeground(new java.awt.Color(0, 0, 0));
         closeBTN.setText("Cerrar");
         closeBTN.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -129,40 +112,28 @@ public class VInicio extends javax.swing.JDialog {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(passTXT)
-                    .addComponent(nameTXT, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(secondsTXT, javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(serverTXT)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel3)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(defaultBTN))
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel1)
-                            .addComponent(jLabel2))
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(closeBTN))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addComponent(signUpBTN)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 156, Short.MAX_VALUE)
-                        .addComponent(regisBTN)))
+                        .addComponent(jLabel2)
+                        .addGap(0, 191, Short.MAX_VALUE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(closeBTN)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(signUpBTN)))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(closeBTN)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(nameTXT, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(jLabel1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(passTXT, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(secondsTXT, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
@@ -171,9 +142,9 @@ public class VInicio extends javax.swing.JDialog {
                 .addComponent(serverTXT, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(regisBTN, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(closeBTN, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(signUpBTN, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(41, Short.MAX_VALUE))
+                .addContainerGap(17, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -184,17 +155,13 @@ public class VInicio extends javax.swing.JDialog {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
 
-        setBounds(0, 0, 452, 379);
+        setBounds(0, 0, 452, 254);
     }// </editor-fold>//GEN-END:initComponents
-
-    private void regisBTNActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_regisBTNActionPerformed
-        // TODO add your handling code here:
-        this.setInteractive(false);
-        this.padre.connect(this.nameTXT.getText(), this.passTXT.getText(), this.serverTXT.getText());
-    }//GEN-LAST:event_regisBTNActionPerformed
 
     private void defaultBTNActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_defaultBTNActionPerformed
         // TODO add your handling code here:
@@ -209,20 +176,17 @@ public class VInicio extends javax.swing.JDialog {
     private void signUpBTNActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_signUpBTNActionPerformed
         // TODO add your handling code here:
         this.setInteractive(false);
-        this.padre.signUp(this.nameTXT.getText(), this.passTXT.getText(), this.serverTXT.getText());
+        this.padre.subscribe(this.serverTXT.getText(), Integer.parseInt(this.secondsTXT.getText()));
     }//GEN-LAST:event_signUpBTNActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton closeBTN;
     private javax.swing.JButton defaultBTN;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JTextField nameTXT;
-    private javax.swing.JTextField passTXT;
-    private javax.swing.JButton regisBTN;
+    private javax.swing.JTextField secondsTXT;
     private javax.swing.JTextField serverTXT;
     private javax.swing.JButton signUpBTN;
     // End of variables declaration//GEN-END:variables

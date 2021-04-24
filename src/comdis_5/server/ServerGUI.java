@@ -5,7 +5,6 @@
  */
 package comdis_5.server;
 
-import comdis_5.database.ImpBD;
 import java.net.MalformedURLException;
 import java.rmi.Naming;
 import java.rmi.RemoteException;

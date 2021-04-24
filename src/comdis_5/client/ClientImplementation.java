@@ -27,70 +27,27 @@ import java.util.Map;
     //LOCAL FUNCTION
     public Boolean connect() throws NotBoundException, MalformedURLException, RemoteException{
         server = (ServerInterface) Naming.lookup(client.getRegistry());
-        return server.connect(this, client.getNickname(), client.getPassword());
+        return server.subscribe(this, client.getSeconds());
     }
     
     public Boolean disconnect() throws NotBoundException, MalformedURLException, RemoteException{
-        return server.disconnect(client.getNickname(), client.getPassword());
+        return server.unsubscribe(this);
     }
     
-    public Boolean signUp() throws NotBoundException, MalformedURLException, RemoteException{
-        server = (ServerInterface) Naming.lookup(client.getRegistry());
-        return server.signUp(client.getProxy(), client.getNickname(), client.getPassword());
-    }
-    
-    public Boolean deleteUser() throws NotBoundException, MalformedURLException, RemoteException{
-        return server.deleteUser(client.getNickname(), client.getPassword());
-    }
-    
-    public Boolean createFriendRequest(String friend) throws NotBoundException, MalformedURLException, RemoteException{
-        return server.createFriendRequest(client.getNickname(), client.getPassword(), friend);
-    }
-    
-    public Boolean removeFriend(String friend) throws NotBoundException, MalformedURLException, RemoteException{
-        return server.removeFriend(client.getNickname(), client.getPassword(), friend);
-    }
-    
-    public Boolean acceptFriendRequest(String friend) throws NotBoundException, MalformedURLException, RemoteException{
-        return server.acceptFriendRequest(client.getNickname(), client.getPassword(), friend);
-    }
-    
-    public Boolean rejectFriendRequest(String friend) throws NotBoundException, MalformedURLException, RemoteException{
-        return server.rejectFriendRequest(client.getNickname(), client.getPassword(), friend);
-    }
-
-    
-    //SERVER FUNTIONS
-    @Override
-    public void addFriendToList(String sourceNickname, ClientInterface connectedFriend) throws RemoteException {
-        client.addFriendToList(sourceNickname, connectedFriend); 
-    }
-
-    @Override
-    public void removeFriendFromList(String sourceNickname) throws RemoteException {
-        client.removeFriendFromList(sourceNickname);
-    }
-    
-    @Override
-    public void receiveFriendRequest(String sourceNickname) throws RemoteException{
-        client.receiveFriendRequest(sourceNickname);
-    }
-
-    @Override
-    public void setFriendList(Map<String, ClientInterface> connectedFriends) throws RemoteException {
-        client.setFriendList((HashMap<String, ClientInterface>) connectedFriends);
-    }
-
-    @Override
-    public void setFriendRequestList(List<String> friendRequests) throws RemoteException {
-        client.setFriendRequestList((ArrayList<String>) friendRequests);
+    public Boolean renew() throws NotBoundException, MalformedURLException, RemoteException{
+        return server.renew(this, client.getSeconds());
     }
     
     
     //CLIENT FUNCTION
     @Override
-    public void receiveMessage(String nickname, String message) throws RemoteException{
-        client.receiveMessage(nickname, message);
+    public void receiveMessage(String message) throws RemoteException{
+        client.receiveMessage(message);
+    }
+    
+    @Override
+    public void receiveData(Double data) throws RemoteException{
+        client.receiveData(data);
     }
     
 }

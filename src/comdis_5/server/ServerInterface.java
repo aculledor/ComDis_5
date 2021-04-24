@@ -12,81 +12,29 @@ import java.rmi.*;
 public interface ServerInterface extends Remote {
 
     /**
-     * This remote method returns true if the connection is successfull or false if it isnt
+     * This remote method returns true if the subscription is successfull or false if it isnt
      * @param client
-     * @param nickname
-     * @param password
+     * @param seconds
      * @return the user or null.
      * @throws java.rmi.RemoteException
      */
-    public Boolean connect(ClientInterface client, String nickname, String password) throws java.rmi.RemoteException;
+    public Boolean subscribe(ClientInterface client, Integer seconds) throws java.rmi.RemoteException;
 
     /**
-     * This remote method lets the server know the client is disconnecting
-     * @param nickname
-     * @param password
+     * This remote method returns true if the renewal is successfull or false if it isnt
+     * @param client
+     * @param seconds
+     * @return the user or null.
+     * @throws java.rmi.RemoteException
+     */
+    public Boolean renew(ClientInterface client, Integer seconds) throws java.rmi.RemoteException;
+
+    /**
+     * This remote method returns true if the unsubscription is successfull or false if it isnt
+     * @param client
      * @return 
      * @throws java.rmi.RemoteException
      */
-    public Boolean disconnect(String nickname, String password) throws java.rmi.RemoteException;
-
-    /**
-     * This remote method returns true if the sign up is successfull or false if it isnt
-     * @param client
-     * @param nickname
-     * @param password
-     * @return the user or null.
-     * @throws java.rmi.RemoteException
-     */
-    public Boolean signUp(ClientInterface client, String nickname, String password) throws java.rmi.RemoteException;
-
-    /**
-     * This remote method returns true if the deletion is successfull or false if it isnt
-     * @param nickname 
-     * @param password 
-     * @return the user or null.
-     * @throws java.rmi.RemoteException
-     */
-    public Boolean deleteUser(String nickname, String password) throws java.rmi.RemoteException;
-
-    /**
-     * This remote method returns the user if the connection is successfull or null if it isnt
-     * @param nickname
-     * @param password
-     * @param friend
-     * @return the user or null.
-     * @throws java.rmi.RemoteException
-     */
-    public Boolean createFriendRequest(String nickname, String password, String friend) throws java.rmi.RemoteException;
-
-    /**
-     * This remote method returns true if the connection is successfull or false if it isnt
-     * @param nickname
-     * @param password
-     * @param friend
-     * @return the user or null.
-     * @throws java.rmi.RemoteException
-     */
-    public Boolean acceptFriendRequest(String nickname, String password, String friend) throws java.rmi.RemoteException;
-
-    /**
-     * This remote method returns true if the connection is successfull or false if it isnt
-     * @param nickname
-     * @param password
-     * @param friend
-     * @return the user or null.
-     * @throws java.rmi.RemoteException
-     */
-    public Boolean rejectFriendRequest(String nickname, String password, String friend) throws java.rmi.RemoteException;
-
-    /**
-     * This remote method returns the user after updating it
-     * @param nickname
-     * @param password
-     * @param friend
-     * @return the user or null.
-     * @throws java.rmi.RemoteException
-     */
-    public Boolean removeFriend(String nickname, String password, String friend) throws java.rmi.RemoteException;
+    public Boolean unsubscribe(ClientInterface client) throws java.rmi.RemoteException;
 
 }  //end interface
