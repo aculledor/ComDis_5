@@ -53,9 +53,9 @@ public class ServerImplementation extends UnicastRemoteObject implements ServerI
             if(!onlineClients.containsKey(client)){
                 return false;
             }
-            onlineClients.get(client).receiveMessage("Te has desconectando");
-            gui.appendText("["+nickname+"] se ha desconectado");
-            this.onlineClients.remove(nickname);
+            gui.appendText("["+client.toString()+"] se ha desconectado");
+            this.onlineClients.remove(client);
+            client.receiveMessage("Te has desconectando");
             return true;
         } catch (NullPointerException e) {
             return false;
@@ -65,12 +65,12 @@ public class ServerImplementation extends UnicastRemoteObject implements ServerI
     @Override
     public Boolean renew(ClientInterface client, Integer seconds) throws RemoteException {
         try {
-            if(!db.isUserPassword(nickname, password)){
+            if(!onlineClients.containsKey(client) || seconds < 1){
                 return false;
             }
-            onlineClients.put(nickname, client);
-            client.receiveMessage(name, nickname+" se ha conectado");
-            gui.appendText("["+nickname+"] se ha conectado");
+            onlineClients.put(client, seconds);
+            client.receiveMessage("Has renovado tu subscripción. Duración actual: "+seconds+" segundos");
+            gui.appendText("["+client.toString()+"] ha renovado su subscripción por "+seconds+" segundos");
             return true;
         } catch (NullPointerException e) {
             return false;
