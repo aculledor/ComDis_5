@@ -8,6 +8,7 @@ import java.rmi.server.*;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Scanner;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -44,26 +45,33 @@ public class ServerImplementation extends UnicastRemoteObject implements ServerI
             Scanner myReader = new Scanner(myObj);
             ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
             Runnable beeper = () -> {
-                if (myReader.hasNextLine()) {
-                    String data = myReader.nextLine();
-                    System.out.println(data);
-                    onlineClients.keySet().forEach((client) -> {
-                        try {
-                            if(onlineClients.get(client) == 0){
+                try{
+                    if (myReader.hasNextLine()) {
+                        String data = myReader.nextLine();
+                        System.out.println(data);
+                        Iterator<ClientInterface> iterator = onlineClients.keySet().iterator();
+                        ClientInterface client;
+                        while(iterator.hasNext()){
+                            client = iterator.next();
+                            try {
+                                if(onlineClients.get(client) == 0){
+                                    onlineClients.remove(client);
+                                    client.receiveMessage("Tu subscripcion ha caducado y has sido eliminado de la lista de mensajería.");
+                                    gui.appendText("Borrando a ["+client.toString()+"] \n\tpor timeout.");
+                                }else{
+                                    client.receiveData(Double.parseDouble(data));
+                                    onlineClients.put(client, onlineClients.get(client) - 1);
+                                }
+                            } catch (RemoteException ex) {
+                                gui.appendText("Conexion con ["+client.toString()+"] \n\tno conseguida. Borrandolo del sistema.");
                                 onlineClients.remove(client);
-                                client.receiveMessage("Tu subscripcion ha caducado y has sido eliminado de la lista de mensajería.");
-                                gui.appendText("Borrando a ["+client.toString()+"] por timeout.");
-                            }else{
-                                client.receiveData(Double.parseDouble(data));
-                                onlineClients.put(client, onlineClients.get(client) - 1);
                             }
-                        } catch (RemoteException ex) {
-                            gui.appendText("Conexion con ["+client.toString()+"] no conseguida. Borrandolo del sistema.");
-                            onlineClients.remove(client);
                         }
-                    });
+                    }
+                    else beeperHandle.cancel(true);
+                }catch(Throwable t){
+                    t.printStackTrace();
                 }
-                else beeperHandle.cancel(true);
             };
             beeperHandle = scheduler.scheduleAtFixedRate(beeper, 0, 1, TimeUnit.SECONDS);
         }catch(FileNotFoundException ex){
@@ -83,7 +91,7 @@ public class ServerImplementation extends UnicastRemoteObject implements ServerI
             }
             onlineClients.put(client, seconds);
             client.receiveMessage("Te has subscrito");
-            gui.appendText("["+client.toString()+"] se ha conectado");
+            gui.appendText("["+client.toString()+"] \n\tse ha subscrito por "+seconds+" segundos");
             return true;
         } catch (NullPointerException e) {
             return false;
@@ -96,7 +104,7 @@ public class ServerImplementation extends UnicastRemoteObject implements ServerI
             if(!onlineClients.containsKey(client)){
                 return false;
             }
-            gui.appendText("["+client.toString()+"] se ha desconectado");
+            gui.appendText("["+client.toString()+"] \n\tse ha desconectado");
             this.onlineClients.remove(client);
             client.receiveMessage("Te has desconectando");
             return true;
@@ -113,7 +121,7 @@ public class ServerImplementation extends UnicastRemoteObject implements ServerI
             }
             onlineClients.put(client, seconds);
             client.receiveMessage("Has renovado tu subscripción. Duración actual: "+seconds+" segundos");
-            gui.appendText("["+client.toString()+"] ha renovado su subscripción por "+seconds+" segundos");
+            gui.appendText("["+client.toString()+"] \n\tha renovado su subscripción por "+seconds+" segundos");
             return true;
         } catch (NullPointerException e) {
             return false;
